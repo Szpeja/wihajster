@@ -1,0 +1,3 @@
+[submodule "vendor/ffi-opengl"]
+	path = vendor/ffi-opengl
+	url = git@github.com:Szpeja/ffi-opengl.git
