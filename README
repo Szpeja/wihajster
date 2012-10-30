@@ -1,0 +1,23 @@
+Instalation
+-----------
+
+@@@
+sudo aptitude install cmake libqt4-core libqt4-dev libqimageblitz-dev libqscintilla2-dev libqwt5-qt4-dev libqwtplot3d-qt4-dev smoke-dev-tools
+
+wget http://rubyforge.org/frs/download.php/75633/qt4-qtruby-2.2.0.tar.gz
+tar -xvzf qt4-qtruby-*.tar.gz
+rm qt4-qtruby-*.tar.gz
+cd qt4-qtruby-*
+
+# Install newest version of smokegen to get macros
+cd smokegen
+cmake . && make && sudo make install
+
+cd ..
+
+# Copy extrac cmake finders
+cp /usr/share/smoke/cmake/FindPhonon.cmake cmake/modules/
+cat /usr/share/smoke/cmake/FindQImageBlitz.cmake |grep -v FindLibraryWithDebug | sed 's/find_library_with_debug/find_library/' > cmake/modules/FindQImageBlitz.cmake 
+
+cmake . && make && sudo make install
+@@@
