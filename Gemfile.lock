@@ -10,13 +10,22 @@ PATH
     ffi-tcc (0.1.0)
       ffi (>= 0.4.0)
 
+PATH
+  remote: vendor/ruby_to_c
+  specs:
+    ruby2c (1.0.0.7.20121030034814)
+      ruby_parser (~> 2.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
     ffi (1.1.5)
     nokogiri (1.5.5)
     rake (0.9.2.2)
+    ruby_parser (2.3.1)
+      sexp_processor (~> 3.0)
     serialport (1.1.0)
+    sexp_processor (3.2.0)
 
 PLATFORMS
   ruby
@@ -27,4 +36,5 @@ DEPENDENCIES
   ffi-tcc!
   nokogiri
   rake
+  ruby2c!
   serialport (~> 1.1.0)

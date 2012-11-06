@@ -1,0 +1,45 @@
+Problem: Missing debug symbol
+
+CMake Error at cmake/modules/FindQImageBlitz.cmake:13 (include):
+  include could not find load file:
+
+    FindLibraryWithDebug
+Call Stack (most recent call first):
+  cmake/modules/MacroOptionalFindPackage.cmake:32 (find_package)
+  smokeqt/CMakeLists.txt:16 (macro_optional_find_package)
+
+
+Solution: Remove module, rename find_library_with_debug to find_library
+
+cat /usr/share/smoke/cmake/FindQImageBlitz.cmake |grep -v FindLibraryWithDebug | \
+sed 's/find_library_with_debug/find_library/' > cmake/modules/FindQImageBlitz.cmake
+
+Problem:
+  Could not find module FindPhonon.cmake or a configuration file for
+package
+  Phonon.
+
+  Adjust CMAKE_MODULE_PATH to find FindPhonon.cmake or set Phonon_DIR to
+the
+  directory containing a CMake configuration file for Phonon.  The file
+will
+  have one of the following names:
+
+    PhononConfig.cmake
+    phonon-config.cmake
+
+Solution: Install additional packages (smoke-dev-tools), install
+smokegen from qt-ruby distribution (see how in README)
+
+
+Problem: 
+
+>> require 'Qt4'
+LoadError: libqtruby4shared.so.2: cannot open shared object file: No
+such file or directory -
+/home/directory/.rvm/rubies/ruby-1.9.3-p194/lib/ruby/site_ruby/1.9.1/x86_64-linux/qtruby4.so
+
+while file exists
+
+Solution:
+sudo ldconfig 

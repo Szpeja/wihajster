@@ -1,3 +1,8 @@
+module Boolean
+end
+TrueClass.send(:include, Boolean)
+FalseClass.send(:include, Boolean)
+
 module Typed
   require 'set'
 
@@ -46,7 +51,8 @@ module Typed
   end
 
   def initialize(*args)
-    self.class.attributes.zip(args) do |name, value|
+    # We only want to assign values that are provided to us, not all defined.
+    args.zip(self.class.attributes) do |value, name|
       self.send("#{name}=", value)
     end
   end

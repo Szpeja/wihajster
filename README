@@ -1,6 +1,8 @@
 Instalation
 -----------
 
+Debian / Ubuntu / Mint + Ruby 1.9.3
+
 @@@
 sudo aptitude install cmake libqt4-core libqt4-dev libqimageblitz-dev libqscintilla2-dev libqwt5-qt4-dev libqwtplot3d-qt4-dev smoke-dev-tools
 
@@ -10,14 +12,16 @@ rm qt4-qtruby-*.tar.gz
 cd qt4-qtruby-*
 
 # Install newest version of smokegen to get macros
+# It's needed to compile other packages
 cd smokegen
 cmake . && make && sudo make install
-
 cd ..
 
-# Copy extrac cmake finders
+# Copy extra cmake finders
 cp /usr/share/smoke/cmake/FindPhonon.cmake cmake/modules/
 cat /usr/share/smoke/cmake/FindQImageBlitz.cmake |grep -v FindLibraryWithDebug | sed 's/find_library_with_debug/find_library/' > cmake/modules/FindQImageBlitz.cmake 
 
 cmake . && make && sudo make install
+
+sudo ldconfig
 @@@
