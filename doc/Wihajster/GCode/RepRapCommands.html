@@ -5,7 +5,7 @@
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
 
-  <title>Module: Wihajster::GCode::Commands</title>
+  <title>Module: Wihajster::GCode::RepRapCommands</title>
 
   <link rel="stylesheet" href="../../rdoc.css" type="text/css" media="screen" />
 
@@ -56,10 +56,6 @@
       <div id="method-list-section" class="section">
         <h3 class="section-header">Methods</h3>
         <ul class="link-list">
-          
-          <li><a href="#method-c-command">::command</a></li>
-          
-          <li><a href="#method-c-commands">::commands</a></li>
           
           <li><a href="#method-i-atx_power_off">#atx_power_off</a></li>
           
@@ -139,8 +135,6 @@
           
           <li><a href="#method-i-wait_for_heaters">#wait_for_heaters</a></li>
           
-          <li><a href="#method-i-write_command">#write_command</a></li>
-          
         </ul>
       </div>
       
@@ -171,11 +165,11 @@
         
           <li><a href="../../Wihajster/GCode.html">Wihajster::GCode</a></li>
         
-          <li><a href="../../Wihajster/GCode/Commands.html">Wihajster::GCode::Commands</a></li>
-        
           <li><a href="../../Wihajster/GCode/FormatPath.html">Wihajster::GCode::FormatPath</a></li>
         
           <li><a href="../../Wihajster/GCode/Options.html">Wihajster::GCode::Options</a></li>
+        
+          <li><a href="../../Wihajster/GCode/RepRapCommands.html">Wihajster::GCode::RepRapCommands</a></li>
         
           <li><a href="../../Wihajster/Path.html">Wihajster::Path</a></li>
         
@@ -206,7 +200,7 @@
   </div>
 
   <div id="documentation">
-    <h1 class="module">Wihajster::GCode::Commands</h1>
+    <h1 class="module">Wihajster::GCode::RepRapCommands</h1>
 
     <div id="description" class="description">
       
@@ -215,21 +209,19 @@
 <p>Prepared based on <a
 href="http://reprap.org/wiki/G-code">reprap.org/wiki/G-code</a></p>
 
-<p><a href="Commands.html">Commands</a> currently do not check for required
-parameters or correctness of their value.  Having those checks (especially
-static ones) could be very usefull -  and would also make validatign <a
-href="../GCode.html">GCode</a> very simply.</p>
+<p>Commands currently do not check for required parameters or correctness of
+their value.  Having those checks (especially static ones) could be very
+usefull -  and would also make validatign <a href="../GCode.html">GCode</a>
+very simply.</p>
 
 <p>Not all commands are implmented (some of them can be added in separate 
 modules based on printer and/or capabilities).</p>
 
-<p><a href="Commands.html">Commands</a> can also be defined or redefined by
-user by calling <a
-href="Commands.html#method-c-command">Commands.command</a> method,  so it
-should be trivial to provide UI for modification of commands, and
-configuration files for specific printers.</p>
+<p>Commands can also be defined or redefined by user by calling
+Commands.command method,  so it should be trivial to provide UI for
+modification of commands, and configuration files for specific printers.</p>
 
-<h2>Standard <a href="Commands.html">Commands</a></h2>
+<h2>Standard Commands</h2>
 <table class="rdoc-list"><tr><td class="rdoc-term"><p><b>G</b></p></td>
 <td>
 <p>Standard <a href="../GCode.html">GCode</a> command, such as move to a
@@ -325,86 +317,6 @@ communications errors.</p>
 
       <!-- Methods -->
       
-      <div id="public-class-method-details" class="method-section section">
-        <h3 class="section-header">Public Class Methods</h3>
-
-      
-        <div id="command-method" class="method-detail ">
-          <a name="method-c-command"></a>
-
-          
-          <div class="method-heading">
-            <span class="method-name">command</span><span
-              class="method-args">(name, code, *accepts)</span>
-            <span class="method-click-advice">click to toggle source</span>
-          </div>
-          
-
-          <div class="method-description">
-            
-            <p>Defines a command given name, associated GCODE and possible arguments</p>
-            
-
-            
-            <div class="method-source-code" id="command-source">
-<pre>
-<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 135</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">command</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">code</span>, *<span class="ruby-identifier">accepts</span>)
-  <span class="ruby-identifier">commands</span>[<span class="ruby-identifier">name</span>] = {
-    <span class="ruby-value">:code</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code</span>,
-    <span class="ruby-value">:accepts</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">accepts</span>.<span class="ruby-identifier">flatten</span>,
-    <span class="ruby-value">:buffered</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">BUFFERED</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">name</span>)
-  }
-
-  <span class="ruby-identifier">define_method</span>(<span class="ruby-identifier">name</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arguments</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">write_command</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">arguments</span>)
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-            </div><!-- command-source -->
-            
-          </div>
-
-          
-
-          
-        </div><!-- command-method -->
-
-      
-        <div id="commands-method" class="method-detail ">
-          <a name="method-c-commands"></a>
-
-          
-          <div class="method-heading">
-            <span class="method-name">commands</span><span
-              class="method-args">()</span>
-            <span class="method-click-advice">click to toggle source</span>
-          </div>
-          
-
-          <div class="method-description">
-            
-            
-            
-
-            
-            <div class="method-source-code" id="commands-source">
-<pre>
-<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 130</span>
-<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">commands</span>
-  <span class="ruby-ivar">@commands</span> <span class="ruby-operator">||=</span> {}
-<span class="ruby-keyword">end</span></pre>
-            </div><!-- commands-source -->
-            
-          </div>
-
-          
-
-          
-        </div><!-- commands-method -->
-
-      
-      </div><!-- public-class-method-details -->
-    
       <div id="public-instance-method-details" class="method-section section">
         <h3 class="section-header">Public Instance Methods</h3>
 
@@ -583,8 +495,8 @@ are undefined (though they can be found out using the M114 command, q.v.).</p>
 All motors and heaters are turned off.  It can be started again by pressing
 the reset button on the master microcontroller.</p>
 
-<p>See also M0 and M1 ( <a href="Commands.html#method-i-stop">stop</a> and <a
-href="Commands.html#method-i-sleep">sleep</a> ).</p>
+<p>See also M0 and M1 ( <a href="RepRapCommands.html#method-i-stop">stop</a>
+and <a href="RepRapCommands.html#method-i-sleep">sleep</a> ).</p>
             
 
             
@@ -599,7 +511,7 @@ href="Commands.html#method-i-sleep">sleep</a> ).</p>
 
           
           <div class="aliases">
-            Also aliased as: <a href="Commands.html#method-i-panic">panic</a>
+            Also aliased as: <a href="RepRapCommands.html#method-i-panic">panic</a>
           </div>
           
 
@@ -680,7 +592,7 @@ PWM value (0-255).  M106 S0 turns the fan off.</p>
 
           
           <div class="aliases">
-            Also aliased as: <a href="Commands.html#method-i-fan_on">fan_on</a>
+            Also aliased as: <a href="RepRapCommands.html#method-i-fan_on">fan_on</a>
           </div>
           
 
@@ -703,8 +615,9 @@ PWM value (0-255).  M106 S0 turns the fan off.</p>
             
             <p>M107: Fan Off</p>
 
-<p>Deprecated. Use M106 S0 ( <a href="Commands.html#method-i-fan">fan</a> <a
-href="Commands.html#OFF">OFF</a> ) instead.</p>
+<p>Deprecated. Use M106 S0 ( <a
+href="RepRapCommands.html#method-i-fan">fan</a> <a
+href="RepRapCommands.html#OFF">OFF</a> ) instead.</p>
             
 
             
@@ -746,7 +659,7 @@ href="Commands.html#OFF">OFF</a> ) instead.</p>
 
           
           <div class="aliases">
-            Alias for: <a href="Commands.html#method-i-fan">fan</a>
+            Alias for: <a href="RepRapCommands.html#method-i-fan">fan</a>
           </div>
           
         </div><!-- fan_on-method -->
@@ -1272,7 +1185,7 @@ ignored.</p>
 
           
           <div class="aliases">
-            Alias for: <a href="Commands.html#method-i-emergency_stop">emergency_stop</a>
+            Alias for: <a href="RepRapCommands.html#method-i-emergency_stop">emergency_stop</a>
           </div>
           
         </div><!-- panic-method -->
@@ -1552,7 +1465,7 @@ extruder).  See also M109( set_extruder_temperature_and_wait ).</p>
 
 <p>This is deprecated because temperatures should be set using the G10 and T
 commands (q.v.).  See also <a
-href="Commands.html#method-i-head_offset">head_offset</a></p>
+href="RepRapCommands.html#method-i-head_offset">head_offset</a></p>
             
 
             
@@ -1773,7 +1686,7 @@ for the specified axis.  Very useful for calibration.</p>
 All motors and heaters are turned off.  It can still be sent G and M codes,
 the first of which will wake it up again.</p>
 
-<p>See also M0( <a href="Commands.html#method-i-stop">stop</a> ), M112.</p>
+<p>See also M0( <a href="RepRapCommands.html#method-i-stop">stop</a> ), M112.</p>
             
 
             
@@ -1887,7 +1800,8 @@ G and M code commands in this state</p>
 All motors and heaters are turned off.  It can be started again by pressing
 the reset button on the master microcontroller.</p>
 
-<p>See also M1 ( <a href="Commands.html#method-i-sleep">sleep</a> ), M112.</p>
+<p>See also M1 ( <a href="RepRapCommands.html#method-i-sleep">sleep</a> ),
+M112.</p>
             
 
             
@@ -2017,42 +1931,6 @@ their set values.  See also M109 ( extruder_temperature_and_wait )</p>
 
           
         </div><!-- wait_for_heaters-method -->
-
-      
-        <div id="write_command-method" class="method-detail ">
-          <a name="method-i-write_command"></a>
-
-          
-          <div class="method-heading">
-            <span class="method-name">write_command</span><span
-              class="method-args">(name, args)</span>
-            <span class="method-click-advice">click to toggle source</span>
-          </div>
-          
-
-          <div class="method-description">
-            
-            <p>Writes a command to a buffer.</p>
-            
-
-            
-            <div class="method-source-code" id="write_command-source">
-<pre>
-<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 148</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">write_command</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">args</span>)
-  <span class="ruby-identifier">o</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">commands</span>[<span class="ruby-identifier">name</span>]
-  <span class="ruby-identifier">c</span> = [ <span class="ruby-identifier">o</span>[<span class="ruby-value">:code</span>] ] <span class="ruby-operator">+</span> <span class="ruby-identifier">o</span>[<span class="ruby-value">:accepts</span>].<span class="ruby-identifier">select</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-identifier">args</span>[<span class="ruby-identifier">a</span>] }.<span class="ruby-identifier">map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-node">&quot;#{a}#{args[a]}&quot;</span> }
-
-  <span class="ruby-identifier">write</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot; &quot;</span>)
-<span class="ruby-keyword">end</span></pre>
-            </div><!-- write_command-source -->
-            
-          </div>
-
-          
-
-          
-        </div><!-- write_command-method -->
 
       
       </div><!-- public-instance-method-details -->

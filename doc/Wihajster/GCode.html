@@ -63,9 +63,9 @@
         <h3 class="section-header">Namespace</h3>
         <ul class="link-list">
           
-          <li><span class="type">MODULE</span> <a href="GCode/Commands.html">Wihajster::GCode::Commands</a></li>
-          
           <li><span class="type">MODULE</span> <a href="GCode/FormatPath.html">Wihajster::GCode::FormatPath</a></li>
+          
+          <li><span class="type">MODULE</span> <a href="GCode/RepRapCommands.html">Wihajster::GCode::RepRapCommands</a></li>
           
           <li><span class="type">CLASS</span> <a href="GCode/Options.html">Wihajster::GCode::Options</a></li>
           
@@ -78,6 +78,10 @@
       <div id="method-list-section" class="section">
         <h3 class="section-header">Methods</h3>
         <ul class="link-list">
+          
+          <li><a href="#method-c-command">::command</a></li>
+          
+          <li><a href="#method-c-commands">::commands</a></li>
           
           <li><a href="#method-c-new">::new</a></li>
           
@@ -96,6 +100,8 @@
           <li><a href="#method-i-to_s">#to_s</a></li>
           
           <li><a href="#method-i-write">#write</a></li>
+          
+          <li><a href="#method-i-write_command">#write_command</a></li>
           
         </ul>
       </div>
@@ -127,11 +133,11 @@
         
           <li><a href="../Wihajster/GCode.html">Wihajster::GCode</a></li>
         
-          <li><a href="../Wihajster/GCode/Commands.html">Wihajster::GCode::Commands</a></li>
-        
           <li><a href="../Wihajster/GCode/FormatPath.html">Wihajster::GCode::FormatPath</a></li>
         
           <li><a href="../Wihajster/GCode/Options.html">Wihajster::GCode::Options</a></li>
+        
+          <li><a href="../Wihajster/GCode/RepRapCommands.html">Wihajster::GCode::RepRapCommands</a></li>
         
           <li><a href="../Wihajster/Path.html">Wihajster::Path</a></li>
         
@@ -259,6 +265,80 @@
         <h3 class="section-header">Public Class Methods</h3>
 
       
+        <div id="command-method" class="method-detail ">
+          <a name="method-c-command"></a>
+
+          
+          <div class="method-heading">
+            <span class="method-name">command</span><span
+              class="method-args">(name, code, *accepts)</span>
+            <span class="method-click-advice">click to toggle source</span>
+          </div>
+          
+
+          <div class="method-description">
+            
+            <p>Defines a command given name, associated GCODE and possible arguments</p>
+            
+
+            
+            <div class="method-source-code" id="command-source">
+<pre>
+<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 41</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">command</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">code</span>, *<span class="ruby-identifier">accepts</span>)
+  <span class="ruby-identifier">commands</span>[<span class="ruby-identifier">name</span>] = {
+    <span class="ruby-value">:code</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">code</span>,
+    <span class="ruby-value">:accepts</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">accepts</span>.<span class="ruby-identifier">flatten</span>,
+    <span class="ruby-value">:buffered</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">BUFFERED</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">name</span>)
+  }
+
+  <span class="ruby-identifier">define_method</span>(<span class="ruby-identifier">name</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">arguments</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">write_command</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">arguments</span>)
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+            </div><!-- command-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- command-method -->
+
+      
+        <div id="commands-method" class="method-detail ">
+          <a name="method-c-commands"></a>
+
+          
+          <div class="method-heading">
+            <span class="method-name">commands</span><span
+              class="method-args">()</span>
+            <span class="method-click-advice">click to toggle source</span>
+          </div>
+          
+
+          <div class="method-description">
+            
+            
+            
+
+            
+            <div class="method-source-code" id="commands-source">
+<pre>
+<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 36</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">commands</span>
+  <span class="ruby-ivar">@commands</span> <span class="ruby-operator">||=</span> {}
+<span class="ruby-keyword">end</span></pre>
+            </div><!-- commands-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- commands-method -->
+
+      
         <div id="new-method" class="method-detail ">
           <a name="method-c-new"></a>
 
@@ -319,7 +399,7 @@
             
             <div class="method-source-code" id="baner-source">
 <pre>
-<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 36</span>
+<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 61</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">baner</span>
   <span class="ruby-identifier">write</span> [
     <span class="ruby-node">&quot;; #{name}&quot;</span>,
@@ -355,7 +435,7 @@
             
             <div class="method-source-code" id="body-source">
 <pre>
-<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 51</span>
+<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 76</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">body</span>
   <span class="ruby-identifier">paths</span>.<span class="ruby-identifier">map</span>(&amp;<span class="ruby-value">:for_gcode</span>).<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\n&quot;</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -388,7 +468,7 @@
             
             <div class="method-source-code" id="footer-source">
 <pre>
-<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 55</span>
+<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 80</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">footer</span>
   <span class="ruby-identifier">fan_off</span>      <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:fan</span>]
   <span class="ruby-identifier">heatbed_off</span>  <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:heatbed</span>]
@@ -423,7 +503,7 @@
             
             <div class="method-source-code" id="header-source">
 <pre>
-<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 44</span>
+<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 69</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">header</span>
   <span class="ruby-identifier">banner</span>                  <span class="ruby-keyword">if</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">comments?</span>
   <span class="ruby-identifier">fan_on</span>(<span class="ruby-identifier">o</span>.<span class="ruby-identifier">fan</span>)           <span class="ruby-keyword">if</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">fan?</span>
@@ -459,7 +539,7 @@
             
             <div class="method-source-code" id="inspect-source">
 <pre>
-<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 78</span>
+<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 103</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">inspect</span>
   <span class="ruby-node">&quot;#Wihajster::GCode[#{name.inspect}] #{buffer.length} lines.&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -525,7 +605,7 @@
             
             <div class="method-source-code" id="to_s-source">
 <pre>
-<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 68</span>
+<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 93</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">to_s</span>
   <span class="ruby-identifier">rewrite!</span>
 
@@ -576,6 +656,42 @@
 
           
         </div><!-- write-method -->
+
+      
+        <div id="write_command-method" class="method-detail ">
+          <a name="method-i-write_command"></a>
+
+          
+          <div class="method-heading">
+            <span class="method-name">write_command</span><span
+              class="method-args">(name, args)</span>
+            <span class="method-click-advice">click to toggle source</span>
+          </div>
+          
+
+          <div class="method-description">
+            
+            <p>Writes a command to a buffer.</p>
+            
+
+            
+            <div class="method-source-code" id="write_command-source">
+<pre>
+<span class="ruby-comment"># File lib/wihajster/g_code.rb, line 54</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">write_command</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">args</span>)
+  <span class="ruby-identifier">o</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">commands</span>[<span class="ruby-identifier">name</span>]
+  <span class="ruby-identifier">c</span> = [ <span class="ruby-identifier">o</span>[<span class="ruby-value">:code</span>] ] <span class="ruby-operator">+</span> <span class="ruby-identifier">o</span>[<span class="ruby-value">:accepts</span>].<span class="ruby-identifier">select</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-identifier">args</span>[<span class="ruby-identifier">a</span>] }.<span class="ruby-identifier">map</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-node">&quot;#{a}#{args[a]}&quot;</span> }
+
+  <span class="ruby-identifier">write</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot; &quot;</span>)
+<span class="ruby-keyword">end</span></pre>
+            </div><!-- write_command-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- write_command-method -->
 
       
       </div><!-- public-instance-method-details -->
