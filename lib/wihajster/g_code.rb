@@ -33,6 +33,14 @@ module Wihajster
       @buffer = []
     end
 
+    # Writes a command to a buffer.
+    def write_command(name, args)
+      o = self.class.commands[name]
+      c = [ o[:code] ] + o[:accepts].select{|a| args[a] }.map{|a| "#{a}#{args[a]}" }
+
+      write c.join(" ")
+    end
+
     def baner
       write [
         "; #{name}",
@@ -79,11 +87,65 @@ module Wihajster
       "#Wihajster::GCode[#{name.inspect}] #{buffer.length} lines."
     end
 
-    module Commands
+    # List of commands that can be sent to RepRap machine.
+    #
+    # Prepared based on http://reprap.org/wiki/G-code
+    #
+    # Commands currently do not check for required parameters or correctness of their value. 
+    # Having those checks (especially static ones) could be very usefull - 
+    # and would also make validatign GCode very simply.
+    #
+    # Not all commands are implmented (some of them can be added in separate 
+    # modules based on printer and/or capabilities).
+    #
+    # Commands can also be defined or redefined by user by calling Commands.command method, 
+    # so it should be trivial to provide UI for modification of commands, and configuration
+    # files for specific printers.
+    #
+    # == Standard Commands
+    #
+    # *G*:: Standard GCode command, such as move to a point.
+    # *M*:: RepRap defined command, such as turn on a cooling fan.
+    # *T*:: Select tool nnn. In RepRap, tools are extruders
+    #
+    # these G-Codes correspond to methods and are named
+    #
+    # == Parameters
+    #
+    # Parameters are passed as a hash to method defined bu a command.
+    #
+    # *S*:: Power parameter, such as the voltage to send to a motor
+    # *P*:: Time  parameter, such as a time in millimetersseconds
+    # *R*:: Temperature Parameter - used for temperatures in Celcius degrees
+    #
+    # *X*:: A X coordinate, usually to move to
+    # *Y*:: A Y coordinate, usually to move to
+    # *Z*:: A Z coordinate, usually to move to
+    # *E*:: Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude. Skeinforge 40 and up interprets this as the absolute length of input filament to consume, rather than the length of the extruded output.
+    #
+    # *F*:: Format Feedrate in mm per minute. (Speed of print head movement)
+    #
+    # == Special commands
+    #
+    # *N*:: Line number. Used to Requestt repeat transmission in the case of communications errors.
+    # *:: Checksum. Used to check for communications errors. 
+    #
+    module RepRapCommands
       BUFFERED = [:move_fast, :move, :move_home]
       OFF = 0
       ON = 255
 
+      # List of all reprap commands.
+      #
+      # Format:
+      #
+      #   {
+      #     :command_name => {
+      #       :code => 'GCode',
+      #       :accepts => [:X, :Y, :Z, ... ],
+      #       :buffered => [true/false]
+      #     }
+      #   }
       def self.commands
         @commands ||= {}
       end
@@ -99,14 +161,6 @@ module Wihajster
         define_method(name) do |arguments|
           write_command(name, arguments)
         end
-      end
-
-      # Writes a command to a buffer.
-      def write_command(name, args)
-        o = self.class.commands[name]
-        c = [ o[:code] ] + o[:accepts].select{|a| args[a] }.map{|a| "#{a}#{args[a]}" }
-
-        write c.join(" ")
       end
 
       ##
@@ -234,7 +288,7 @@ module Wihajster
       # Example: G90
       #
       # All coordinates from now on are absolute relative to the origin of the machine. (This is the RepRap default.) 
-      command :absolute_positioning, 'G90'
+      command :set_absolute_positioning, 'G90'
 
       ##
       # G91: Set to Relative Positioning
@@ -242,7 +296,7 @@ module Wihajster
       # Example: G91
       #
       # All coordinates from now on are relative to the last position. 
-      command :relative_positioning, 'G91'
+      command :set_relative_positioning, 'G91'
 
       ##
       # G92: Set Position
@@ -378,7 +432,7 @@ module Wihajster
       # makes the extruder interpret extrusion as absolute positions.
       #
       # This is the default in repetier.
-      command :extruder_absolute_mode, 'M82'
+      command :set_extruder_absolute_mode, 'M82'
       
       ##
       # M83: set extruder to relative mode
@@ -386,7 +440,7 @@ module Wihajster
       # Example: M83
       #
       # makes the extruder interpret extrusion values as relative positions. 
-      command :extruder_relative_mode, 'M83'
+      command :set_extruder_relative_mode, 'M83'
 
       ##
       # M92: Set axis_steps_per_unit
@@ -507,7 +561,7 @@ module Wihajster
       # For example, the machine returns a string such as:
       #
       # ok C: X:0.00 Y:0.00 Z:0.00 E:0.00 
-      command :current_position, 'M114'
+      command :get_current_position, 'M114'
 
       ##
       # M116: Wait
@@ -540,7 +594,7 @@ module Wihajster
       # Example: M128 S255
       #
       # PWM value to control internal extruder pressure. S255 is full pressure. 
-      command :extruder_pressure_pwm, 'M128', :S
+      command :set_extruder_pressure_pwm, 'M128', :S
 
       ##
       # M129: Extruder pressure off

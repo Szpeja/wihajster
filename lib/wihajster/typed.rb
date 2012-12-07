@@ -45,6 +45,12 @@ module Typed
       end
     end
 
+    def inherit_attributes
+      if ancestor = ancestors.select{|a| a.respond_to?(:attributes) }[1]
+        ancestor.attributes.each{|a| attributes.add a }
+      end
+    end
+
     def [](*args)
       new(*args)
     end
