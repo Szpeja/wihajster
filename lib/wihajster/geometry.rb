@@ -1,5 +1,5 @@
 module Wihajster
-  class Point < ::Typed::Base
+  class Point < Typed::Base
     has :x, :y, :z, Numeric
 
     def *(k) 
@@ -25,9 +25,10 @@ module Wihajster
     def angle() raise(NotImplementedError) end
   end
 
-  class Triangle < ::Typed::Base
+  class Triangle < Typed::Base
     has :v1, :v2, :v3, Point
-    has :normal_direction, Numeric, 
+    has :normal_direction,
+      :kind => Numeric, 
       :default => 1, 
       :check => lambda{|nd| ![-1, 1].include?(nd) && "direction must be either -1 or 1" }
 
@@ -43,8 +44,8 @@ module Wihajster
     end
   end
 
-  class Path < ::Typed::Base
+  class Path < Typed::Base
     has :points
-    has :width, Numeric, :default => 1
+    has :width, :kind => Numeric, :default => 1
   end
 end

@@ -1,6 +1,6 @@
 module Wihajster
   class GCode
-    class Options < ::Typed::Base
+    class Options < Typed::Base
       byte = lambda{|v| !(0..255).include?(v) && "value must be within 0..255 range" }
 
       has :fan,         :check => byte
@@ -8,14 +8,14 @@ module Wihajster
       has :temperature, :check => byte
       has :comments,    Boolean
 
-      atributes.each do |name|
+      attributes.each do |name|
         define_method("#{name}?") do
           v = send(name)
           v && (v != 0)
         end
       end
     end
-  
+
     attr_accessor :name, :options, :paths
     attr_reader :buffer
 
