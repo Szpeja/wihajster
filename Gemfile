@@ -29,7 +29,7 @@ group :web do
 end
 
 group :ui do
-  gem "qtbindings"
+  require 'Qt4'
   gem "ffi-opengl", :path => "vendor/ffi-opengl"
 end
 
