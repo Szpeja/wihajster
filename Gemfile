@@ -28,8 +28,7 @@ group :web do
   gem "rack", "~>1.1"
 end
 
-group :ui do
-  require 'Qt4'
+group :opengl do
   gem "ffi-opengl", :path => "vendor/ffi-opengl"
 end
 

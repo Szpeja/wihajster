@@ -1,5 +1,9 @@
 $LOAD_PATH << File.dirname(__FILE__) unless $LOAD_PATH.include?(File.dirname(__FILE__))
 
+require 'logger'
+require 'bigdecimal'
+require 'matrix'
+
 module Wihajster
   module_function
 
@@ -11,8 +15,13 @@ module Wihajster
     (ENV["APP_ENV"] || "development").to_sym
   end
 
-end
+  def logger
+    Logger.new($stdout)
+  end
 
-%w[ typed geometry g_code stl ].each do |name|
-  require "wihajster/#{name}"
+  def load_libraries
+    %w[ parameters typed geometry g_code stl opengl/geometry opengl/ui].each do |name|
+      require "wihajster/#{name}"
+    end
+  end
 end

@@ -1,5 +1,8 @@
 module Wihajster
   class GCode
+    require 'wihajster/g_code/commands'
+    include Commands
+
     class Options < Typed::Base
       byte = lambda{|v| !(0..255).include?(v) && "value must be within 0..255 range" }
 
@@ -29,16 +32,13 @@ module Wihajster
       @buffer << line
     end
 
-    def rewrite!
+    def reset!
       @buffer = []
     end
 
     # Writes a command to a buffer.
     def write_command(name, args)
-      o = self.class.commands[name]
-      c = [ o[:code] ] + o[:accepts].select{|a| args[a] }.map{|a| "#{a}#{args[a]}" }
-
-      write c.join(" ")
+      write format_command(name, args)
     end
 
     def baner
@@ -50,10 +50,10 @@ module Wihajster
 
     # An ASCII GCode header
     def header
-      banner                  if o.comments?
-      fan_on(o.fan)           if o.fan?
-      heatbed_on(o.heatbed)   if o.heatbed?
-      extruder(o.temperature) if o.temperature?
+      banner                      if o.comments?
+      c(:fan_on, o.fan)           if o.fan?
+      c(:heatbed_on, o.heatbed)   if o.heatbed?
+      c(:extruder, o.temperature) if o.temperature?
     end
 
     def body
@@ -61,9 +61,9 @@ module Wihajster
     end
 
     def footer
-      fan_off      if options[:fan]
-      heatbed_off  if options[:heatbed]
-      extruder_off if options[:temperature]
+      c(:fan_off)      if options[:fan]
+      c(:heatbed_off)  if options[:heatbed]
+      c(:extruder_off) if options[:temperature]
     end
 
     module FormatPath
@@ -74,7 +74,7 @@ module Wihajster
     Path.send(:include, FormatPath)
 
     def to_s
-      rewrite!
+      reset!
 
       header
       body
