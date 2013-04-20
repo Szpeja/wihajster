@@ -22,7 +22,7 @@ PATH
 PATH
   remote: vendor/ruby_to_c
   specs:
-    ruby2c (1.0.0.7.20121030034814)
+    ruby2c (1.0.0.7)
       ruby_parser (~> 2.0)
 
 GEM
