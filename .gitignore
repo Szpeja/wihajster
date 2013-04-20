@@ -1,5 +1,5 @@
 .bundle
+.yardoc
 
 vendor/gems/*
 vendor/qt4-qtruby-2.2.0/*
-

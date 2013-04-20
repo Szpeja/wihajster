@@ -9,12 +9,15 @@ gem "rake"
 gem "ffi",      "~>1.1"         # Foreign Function Interface
 gem "nokogiri"                  # XML Parsing.
 
-gem "serialport", "~> 1.1"    # Communication with serial port.
+gem "serialport", "~> 1.1"      # Communication with serial port.
 gem "rubygame"                  # For Joystick control
+gem "ruby-units"                # Unit conversion. Quantity is possible alternative (more rubish).
 
 group :development do
   # Use git version till https://github.com/pry/pry/issues/872 is not fixed in released gem.
-  gem "pry", :git => "git://github.com/pry/pry.git" 
+  gem "pry", :git => "git://github.com/pry/pry.git"
+
+  gem "yard"                    # Documentation generator 
 
   # File system monitoring on:
   linux_gem 'rb-inotify', '~> 0.9'
