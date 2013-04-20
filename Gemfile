@@ -13,7 +13,8 @@ gem "serialport", "~> 1.1"    # Communication with serial port.
 gem "rubygame"                  # For Joystick control
 
 group :development do
-  gem "pry"
+  # Use git version till https://github.com/pry/pry/issues/872 is not fixed in released gem.
+  gem "pry", :git => "git://github.com/pry/pry.git" 
 
   # File system monitoring on:
   linux_gem 'rb-inotify', '~> 0.9'

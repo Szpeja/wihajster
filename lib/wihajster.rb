@@ -20,7 +20,7 @@ module Wihajster
   end
 
   def load_libraries
-    %w[ initializers typed geometry g_code stl opengl/geometry opengl/ui].each do |name|
+    %w[ initializers units typed geometry g_code stl opengl/geometry opengl/ui].each do |name|
       require "wihajster/#{name}"
     end
   end
