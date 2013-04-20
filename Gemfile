@@ -4,8 +4,6 @@ def osx_gem(name, *v)   gem name, *v, :require => RUBY_PLATFORM =~ /darwin/i ? n
 def linux_gem(name, *v) gem name, *v, :require => RUBY_PLATFORM =~ /linux/i  ? name : false end
 def win_gem(name, *v)   gem name, *v, :require => RUBY_PLATFORM =~ /mswin/i  ? name : false end
 
-# Utility gems.
-gem "rake", :require => false   
 gem "ffi",        "~> 1.1"      # Foreign Function Interface
 gem "nokogiri"                  # XML Parsing.
 
@@ -13,7 +11,11 @@ gem "serialport", "~> 1.1"      # Communication with serial port.
 gem "rubygame"                  # For Joystick control
 gem "ruby-units"                # Unit conversion. Quantity is possible alternative (more rubish).
 
-gem "yard", :require => false   # Documentation generator. We want it available but not required unless we generate doc.
+# Utility gems - We want them available but not required unless we want to.
+def util_gem(name)      gem name, :require => false end
+util_gem "rake"                 # Tasks
+util_gem "yard"                 # Documentation generator. 
+util_gem "redcarpet"            # Markdown formatting for documentation
 
 group :development do
   # Use git version till https://github.com/pry/pry/issues/872 is not fixed in released gem.
