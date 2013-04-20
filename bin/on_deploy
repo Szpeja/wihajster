@@ -1,3 +1,6 @@
 #!/bin/bash
 
-rake yard
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+source .rvmrc && echo "Loaded .rvmrc" || echo "Error when loading .rvmrc"
+
+bundle exec rake yard
