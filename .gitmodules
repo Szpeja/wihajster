@@ -1,9 +1,9 @@
 [submodule "vendor/ffi-opengl"]
 	path = vendor/ffi-opengl
-	url = git@github.com:Szpeja/ffi-opengl.git
+	url = git://github.com/Szpeja/ffi-opengl.git
 [submodule "vendor/ffi-tcc"]
 	path = vendor/ffi-tcc
-	url = git@github.com:Szpeja/ffi-tcc.git
+	url = git://github.com/Szpeja/ffi-tcc.git
 [submodule "vendor/ruby_to_c"]
 	path = vendor/ruby_to_c
-	url = git@github.com:Szpeja/ruby_to_c.git
+	url = git://github.com/Szpeja/ruby_to_c.git
