@@ -9,14 +9,14 @@ gem "rake"
 gem "ffi",      "~>1.1"         # Foreign Function Interface
 gem "nokogiri"                  # XML Parsing.
 
-gem "serialport", "~> 1.1.0"    # Communication with serial port.
+gem "serialport", "~> 1.1"    # Communication with serial port.
 gem "rubygame"                  # For Joystick control
 
 group :development do
   gem "pry"
 
   # File system monitoring on:
-  linux_gem 'rb-inotify', '~> 0.8.8'
+  linux_gem 'rb-inotify', '~> 0.9'
   osx_gem   'rb-fsevent'
   win_gem   'rb-fchange'
 

@@ -11,7 +11,6 @@ Wihajster.load_libraries
 class WihajsterApp
   include Singleton
 
-  include Parameters
   include Wihajster
   include Wihajster::Initializers
 
@@ -28,39 +27,38 @@ class WihajsterApp
     run_event_queue
   end
 
-  protected
-
-  def start
-    action = ARGV[0] || "run"
-    methods = self.public_methods(false)
-    actions = methods.select{|m| m.to_s.include?(action) }
-
-    if actions.length == 1
-      method = actions.first
-      begin                                                                                                                                                   
-        self.send(method, *ARGV[1..-1])
-      rescue ArgumentError => e
-        puts "Could not call action #{method} - #{e}"
-      end
-    else
-      puts "Usage: #{__FILE__} [action]"
-      puts "\nActions:"
-      methods.each do |a| 
-        params = 
-          self.method(a).parameters.map do |t, arg|
-            case t
-            when :req then arg.to_s
-            when :opt then "[#{arg}]"
-            when :rest then "[*#{arg}]"
-            end
-          end.join(" ")
-
-        puts "  #{a} #{params}"
-      end
-    end
-    
-    self
-  end
 end
 
-WihajsterApp.instance.start
+def start(app)
+  action = ARGV[0] || "run"
+  methods = app.public_methods(false)
+  actions = methods.select{|m| m.to_s.include?(action) }
+
+  if actions.length == 1
+    method = actions.first
+    begin                                                                                                                                                   
+      app.send(method, *ARGV[1..-1])
+    rescue ArgumentError => e
+      puts "Could not call action #{method} - #{e}"
+    end
+  else
+    puts "Usage: #{__FILE__} [action]"
+    puts "\nActions:"
+    methods.each do |a| 
+      params = 
+        app.method(a).parameters.map do |t, arg|
+          case t
+          when :req then arg.to_s
+          when :opt then "[#{arg}]"
+          when :rest then "[*#{arg}]"
+          end
+        end.join(" ")
+
+      puts "  #{a} #{params}"
+    end
+  end
+  
+  app
+end
+
+start WihajsterApp.instance

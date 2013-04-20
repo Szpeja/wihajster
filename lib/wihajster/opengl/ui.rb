@@ -5,7 +5,7 @@ require 'ffi-opengl'
 # Based on https://github.com/rubygame/rubygame/blob/next/samples/demo_opengl.rb
 
 # Load images from this directory
-Surface.autoload_dirs << File.join(Wihajster.root, "assets", "images")
+# Surface.autoload_dirs << File.join(Wihajster.root, "assets", "images")
 
 class Wihajster::Opengl::Ui
   include GL
