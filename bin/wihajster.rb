@@ -5,7 +5,7 @@ require "bundler"
 
 require File.expand_path '../../lib/wihajster', __FILE__
 
-Bundler.require(:default, :opengl, Wihajster.env)
+Bundler.require(:default, Wihajster.env)
 Wihajster.load_libraries
 
 class WihajsterApp
@@ -13,20 +13,28 @@ class WihajsterApp
 
   include Wihajster
   include Wihajster::Initializers
+  include Wihajster::Reloader
+  include Wihajster::EventLoop
 
   def console
-    enable_reloading
+    prepare
+    Thread.new{ run_event_queue }
     pry self
   end
 
   def run(serial_port=nil, joystick_number=nil, printer_speed=115200)
+    prepare(serial_port, joystick_number, printer_speed)
+    run_event_queue
+  end
+
+  protected
+
+  def prepare(serial_port=nil, joystick_number=nil, printer_speed=115200)
     enable_reloading
     initialize_joystick(joystick_number)
     initialize_printer(serial_port, printer_speed)
     initialize_event_queue
-    run_event_queue
   end
-
 end
 
 def start(app)

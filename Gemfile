@@ -11,6 +11,9 @@ gem "serialport", "~> 1.1"      # Communication with serial port.
 gem "rubygame"                  # For Joystick control
 gem "ruby-units"                # Unit conversion. Quantity is possible alternative (more rubish).
 
+gem "highline"                # Command line support
+gem "ffi-opengl", :path => "vendor/ffi-opengl"
+
 # Utility gems - We want them available but not required unless we want to.
 def util_gem(name)      gem name, :require => false end
 util_gem "rake"                 # Tasks
@@ -32,10 +35,6 @@ end
 
 group :web do
   gem "rack", "~>1.1"
-end
-
-group :opengl do
-  gem "ffi-opengl", :path => "vendor/ffi-opengl"
 end
 
 group :experiments do

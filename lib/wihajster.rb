@@ -19,8 +19,12 @@ module Wihajster
     Logger.new($stdout)
   end
 
+  def ui
+    @ui ||= Console::Ui.new
+  end
+
   def load_libraries
-    %w[ initializers units typed geometry g_code stl opengl/geometry opengl/ui].each do |name|
+    %w[ initializers units typed geometry g_code stl opengl/geometry opengl/ui console/ui].each do |name|
       require "wihajster/#{name}"
     end
   end
