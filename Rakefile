@@ -11,5 +11,7 @@ YARD::Rake::YardocTask.new do |t|
     'doc/*.md',
     'Readme.md',
   ]
-  t.options << '-opublic' << '--title' << "Wihajster Documentation"
+  t.options << '-opublic' <<
+    '--title' << "Wihajster Documentation" <<
+    '--readme' << 'Readme.md'
 end

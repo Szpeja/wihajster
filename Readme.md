@@ -1,6 +1,6 @@
-h1. Instalation 
+# Instalation 
 
-h2. QT4
+## QT4
 
 Debian / Ubuntu / Mint + Ruby 1.9.3
 
@@ -27,7 +27,7 @@ cmake . && make && sudo make install
 sudo ldconfig
 ```
 
-h2. Instalation - SDL/Rubygame
+## Instalation - SDL/Rubygame
 
 `https://github.com/rubygame/rubygame/wiki/Install`
 
