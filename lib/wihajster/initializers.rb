@@ -18,7 +18,7 @@ module Wihajster::Initializers
 
   def initialize_printer(device=nil, speed=115200)
     @printer_device = device || begin
-      devices = `ls -1 /dev/{ACM,USB}* 2> /dev/null`.split("\n").compact
+      devices = Dir.glob('/dev/*{ACM,USB}*').to_a
       ui.choose("Choose printer:", devices)
     end
 
