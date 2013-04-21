@@ -24,6 +24,8 @@ module Wihajster
   end
 
   def load_libraries
+    %[ typed ]
+    require 'wihajster/typed'
     Dir.glob(File.join(root, "lib/wihajster/*.rb")).each do |path|
       require "wihajster/#{File.basename(path)}"
     end

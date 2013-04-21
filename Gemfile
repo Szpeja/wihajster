@@ -4,18 +4,20 @@ def osx_gem(name, *v)   gem name, *v, :require => RUBY_PLATFORM =~ /darwin/i ? n
 def linux_gem(name, *v) gem name, *v, :require => RUBY_PLATFORM =~ /linux/i  ? name : false end
 def win_gem(name, *v)   gem name, *v, :require => RUBY_PLATFORM =~ /mswin/i  ? name : false end
 
+# Utility gems - We want them available but not required unless we want to.
+def util_gem(name, opt={})      gem name, opt.merge(:require => false) end
+
 gem "ffi",        "~> 1.1"      # Foreign Function Interface
 gem "nokogiri"                  # XML Parsing.
 
 gem "serialport", "~> 1.1"      # Communication with serial port.
-gem "rubygame"                  # For Joystick control
 gem "ruby-units"                # Unit conversion. Quantity is possible alternative (more rubish).
+gem "highline"                  # Command line support
 
-gem "highline"                # Command line support
-gem "ffi-opengl", :path => "vendor/ffi-opengl"
+util_gem "rubygame"             # For Joystick control
 
-# Utility gems - We want them available but not required unless we want to.
-def util_gem(name)      gem name, :require => false end
+util_gem "ffi-opengl", :path => "vendor/ffi-opengl"
+
 util_gem "rake"                 # Tasks
 util_gem "yard"                 # Documentation generator. 
 util_gem "redcarpet"            # Markdown formatting for documentation
