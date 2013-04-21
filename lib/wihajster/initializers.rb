@@ -1,8 +1,21 @@
 module Wihajster::Initializers
   attr_accessor :joystick, :event_queue, :printer
 
+  def silence_stream(stream)
+    old_stream = stream.dup
+    stream.reopen('log/sdl_error.log')
+    stream.sync = true
+
+    yield
+  ensure
+    stream.reopen(old_stream)
+  end
+
   def initialize_rubygame
-    require 'rubygame'
+    silence_stream(STDERR) do
+      require 'rubygame'
+    end
+    
     @rubygame_ready = true
   rescue Rubygame::SDLError => e
     ui.log :initializer, "Cannot initialize rubygame becouse of: #{e}."
