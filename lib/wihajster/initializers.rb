@@ -1,7 +1,7 @@
 module Wihajster::Initializers
-  attr_accessor :joystick, :event_queue, :printer, :printer_device
+  attr_accessor :joystick, :event_queue, :printer
 
-  def initialize_joystick(joystick_number=nil)
+  def joystick(joystick_number=nil)
     joystick_number ||= begin 
       joysticks = Rubygame::Joystick.num_joysticks.times.map do |i|
         [i, Rubygame::Joystick.get_name(i).gsub(/\s+/, ' ').strip]
@@ -12,21 +12,20 @@ module Wihajster::Initializers
 
     if joystick_number
       @joystick = ::Rubygame::Joystick.new(joystick_number.to_i)
-      ui.say "Initialized joystick: #{@joystick.name.gsub(/\s+/, ' ').strip}"
+      ui.log :initializer, "Initialized joystick: #{@joystick.name.gsub(/\s+/, ' ').strip}"
     end
   end
+  alias :initialize_joystick :joystick
 
   def initialize_printer(device=nil, speed=115200)
-    @printer_device = device || begin
-      devices = Dir.glob('/dev/*{ACM,USB}*').to_a
-      ui.choose("Choose printer:", devices)
-    end
+    device ||= ui.choose("Choose printer:", ::Wihajster::Printer.devices)
 
-    if printer_device
-      @printer = ::SerialPort.new(@printer_device, speed, 8, 1, SerialPort::NONE)
-      ui.say "Initialized printer on: #{printer_device}"
+    @printer = device && ::Wihajster::Printer.new(device, speed)
+
+    if @printer
+      ui.log :initializer, "Initialized printer on: #{printer_device}"
     else
-      ui.say "Failed to initialize printer"
+      ui.log :initializer, "Failed to initialize printer"
     end
   end
 

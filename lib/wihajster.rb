@@ -24,8 +24,8 @@ module Wihajster
   end
 
   def load_libraries
-    %w[ initializers reloader event_loop units typed geometry g_code stl opengl/geometry opengl/ui console/ui].each do |name|
-      require "wihajster/#{name}"
+    Dir.glob(File.join(root, "lib/wihajster/*.rb")).each do |path|
+      require "wihajster/#{File.basename(path)}"
     end
   end
 end

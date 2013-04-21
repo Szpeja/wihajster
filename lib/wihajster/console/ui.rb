@@ -34,5 +34,9 @@ module Wihajster::Console
     rescue Interrupt
       nil
     end
+
+    def log(type, message)
+      say "[#{type}] #{message}"
+    end
   end
 end
