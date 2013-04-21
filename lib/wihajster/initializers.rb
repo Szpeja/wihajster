@@ -37,7 +37,7 @@ module Wihajster::Initializers
     @printer = device && ::Wihajster::Printer.new(device, speed)
 
     if @printer
-      ui.log :initializer, "Initialized printer on: #{printer_device}"
+      ui.log :initializer, "Initialized printer on: #{device}"
     else
       ui.log :initializer, "Failed to initialize printer"
     end
