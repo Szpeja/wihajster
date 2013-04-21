@@ -31,7 +31,7 @@ class Wihajster::Printer
       @connected = true
       @sp.read_timeout = @blocking
 
-      Thread.new{ communication }
+      communication_thread
       reset_queue
     end
 
@@ -120,9 +120,12 @@ class Wihajster::Printer
     checksum = line.each_byte.inject(0){|c, b| c ^= b }
     line = "#{line}*#{checksum}\n" #add checksum
     
-    ui.log :queued, line
-
-    @send_queue.push line
+    if can_write?
+      send_to_printer(line)
+    else
+      ui.log :queued, line
+      @send_queue.push line
+    end
   end
 
   # Returns line without trailing spaces or nil if there's nothing to read(in non-blocking mode).
@@ -155,7 +158,8 @@ class Wihajster::Printer
   #
   # // This is some debugging or other information on a line on its own. 
   # It may be sent at any time.
-  def communication
+  #
+  def communication_loop
     while connected? && line = readline
       ui.log :received, line
 
@@ -173,23 +177,30 @@ class Wihajster::Printer
         @can_send = 1
       end
 
-      if can_write? && @send_queue.length > 0
-        to_send = [@can_send, @send_queue.length].min
-        @can_send -= to_send
-
-        to_send.times do
-          line_to_send = @send_queue.pop
-
-          ui.log :sending, line_to_send
-          @sp.write(line_to_send)
-        end
-      end
+      send_commands_from_queue if can_write?
     end
   rescue => e
     puts "Got exception in event communication thread!"
     puts "#{e.class}: #{e}\n  #{e.backtrace.join("\n  ")}"
     disconnect
     raise(e)
+  end
+
+  def send_commands_from_queue
+    [@can_send, @send_queue.length].min.times do
+      send_to_printer(@send_queue.pop)
+    end
+  end
+
+  def send_to_printer(line_to_send)
+    @can_send -= 1
+
+    ui.log :sending, line_to_send
+    @sp.write(line_to_send)
+  end
+
+  def communication_thread
+    @communication_thread ||= Thread.new{ communication_loop }
   end
 
   def status
