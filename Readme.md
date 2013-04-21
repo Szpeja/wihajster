@@ -37,3 +37,9 @@ For debian:
 sudo apt-get install ruby ruby-dev irb ri rubygems
 sudo apt-get install libsdl1.2-dev libsdl-gfx1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev
 ```
+
+# Alternatives and Inspirations
+
+- https://github.com/D1plo1d/Replicate.rb/blob/master/ReprapDriver.rb
+- https://github.com/kliment/Printrun/blob/master/printcore.py
+
