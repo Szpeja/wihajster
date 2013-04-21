@@ -1,5 +1,15 @@
 require 'thread'
 
+# TODO: Make sure synchronization between of writes to printer is correct (use Monitor?)
+# problematic case:
+#
+# App Thread         | Communication Thread
+# ------------------------------------------
+# gcode("X000")      | Got "ok" from printer
+# can_write? => true | can_write? => true
+# send_to_printer    | send_to_printer
+# @can_send => 0     | @can_send => -1
+#
 class Wihajster::Printer
   attr_reader :device, :speed, :sp
 
@@ -10,11 +20,14 @@ class Wihajster::Printer
   def initialize(dev, opt={})
     @device     = dev
     @speed      = opt[:speed] || 115200
+    @model      = opt[:model] || :reprap
+
     @blocking   = 0 # Blocking indefinitely
     @line_nr    = 0
+
     # Number of commands we're allowed to send.
     # see http://reprap.org/wiki/GCODE_buffer_multiline_proposal
-    @can_send   = 0 
+    @can_send   = 0
 
     @send_queue = Queue.new
     @lines      = []
@@ -32,7 +45,7 @@ class Wihajster::Printer
       @sp.read_timeout = @blocking
 
       communication_thread
-      reset_queue
+      reset
     end
 
     connected?
@@ -73,8 +86,6 @@ class Wihajster::Printer
     @sp.dtr = 1
     @sp.rts = 1
     sleep(0.3) #give the arduino some startup time
-
-    reset_queue
   end
 
   # Alternative reset. TODO: check which one works :D
@@ -83,16 +94,25 @@ class Wihajster::Printer
     sleep(0.2);
     @sp.dtr = 0
     sleep(0.3);
-
-    reset_queue
   end
 
-  def reset_queue
+  def reset
     @lines.clear
     @send_queue.clear
     @line_nr = 0
 
     gcode('M101')
+  end
+
+  def hard_reset
+    case @model
+    when :reprap
+      reset_reprap
+    when :arduino
+      reset_arduino
+    end
+
+    reset
   end
 
   def raw_gcode(lines)
