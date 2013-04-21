@@ -24,10 +24,26 @@ module Wihajster
   end
 
   def load_libraries
-    %[ typed ]
-    require 'wihajster/typed'
-    Dir.glob(File.join(root, "lib/wihajster/*.rb")).each do |path|
-      require "wihajster/#{File.basename(path)}"
+    to_load = Dir.glob(File.join(root, "lib/wihajster/*.rb")).to_a +
+      Dir.glob(File.join(root, "lib/wihajster/*/*.rb")).to_a
+    failed_path, exception = nil, nil
+    
+    while (path = to_load.shift) && (failed_path != path)
+      $stderr.puts "Loading #{path.inspect}" if env == :debug
+      begin
+        require path
+        failed_path, exception = nil, nil
+      rescue NameError => e
+        $stderr.puts "Cannot load #{path} - #{e}" if env == :debug
+        exception = e
+        to_load.push(failed_path = path)
+      end
+    end
+
+    if failed_path
+      $stderr.puts "Cannot load: #{failed_path}"
+      $stderr.puts "#{exception.class.name}: #{exception}\n  #{exception.backtrace.join("\n  ")}"
+      raise exception
     end
   end
 end

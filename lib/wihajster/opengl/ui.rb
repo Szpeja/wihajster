@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'ffi-opengl'
+require 'rubygame'
 
 # Based on https://github.com/rubygame/rubygame/blob/next/samples/demo_opengl.rb
 
