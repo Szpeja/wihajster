@@ -1,4 +1,4 @@
-module Wihajster::Opengl
+module Wihajster::Opengl::Geometry
   def draw_point(p)
     glVertex3f( p.x, p.y, p.z)
   end

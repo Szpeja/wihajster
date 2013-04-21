@@ -1,5 +1,10 @@
 module Wihajster::EventLoop
   def run_event_queue
+    return unless rubygame_ready?
+
+    @event_queue = Rubygame::EventQueue.new
+    @event_queue.enable_new_style_events
+
     while event = @event_queue.wait
       next if event.is_a?(Rubygame::Events::JoystickAxisMoved) && event.value.abs < 0.03
 

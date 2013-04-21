@@ -8,7 +8,7 @@ require 'rubygame'
 # Load images from this directory
 # Surface.autoload_dirs << File.join(Wihajster.root, "assets", "images")
 
-class Wihajster::Opengl::Ui
+class Wihajster::Ui::Desktop
   include GL
   include GLU
 

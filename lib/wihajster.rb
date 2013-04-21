@@ -20,30 +20,34 @@ module Wihajster
   end
 
   def ui
-    @ui ||= Console::Ui.new
+    @ui ||= Ui.init(:console)
   end
 
-  def load_libraries
-    to_load = Dir.glob(File.join(root, "lib/wihajster/*.rb")).to_a +
-      Dir.glob(File.join(root, "lib/wihajster/*/*.rb")).to_a
-    failed_path, exception = nil, nil
+  def load_libraries(base="")
+    to_load = Dir.glob(File.join(root, "lib/wihajster/#{base}", "*.rb")).to_a
+    failed_path, exceptions = nil, {}
     
     while (path = to_load.shift) && (failed_path != path)
       $stderr.puts "Loading #{path.inspect}" if env == :debug
       begin
         require path
-        failed_path, exception = nil, nil
+        failed_path = nil
       rescue NameError => e
         $stderr.puts "Cannot load #{path} - #{e}" if env == :debug
-        exception = e
-        to_load.push(failed_path = path)
+        # We save first failed path, so when we encounter it again, 
+        # we know that loading every other lib before it failed.
+        failed_path ||= path 
+        exceptions[path] = e
+        to_load.push(path)
       end
     end
 
     if failed_path
-      $stderr.puts "Cannot load: #{failed_path}"
-      $stderr.puts "#{exception.class.name}: #{exception}\n  #{exception.backtrace.join("\n  ")}"
-      raise exception
+      exceptions.each_pair do |epath, exception|
+        $stderr.puts "Cannot load: #{epath}"
+        $stderr.puts "#{exception.class.name}: #{exception}\n  #{exception.backtrace.join("\n  ")}"
+      end
+      raise exceptions.values.first
     end
   end
 end

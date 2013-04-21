@@ -31,9 +31,9 @@ class WihajsterApp
 
   def prepare(serial_port=nil, joystick_number=nil, printer_speed=115200)
     enable_reloading
+    initialize_rubygame
     initialize_joystick(joystick_number)
     initialize_printer(serial_port, printer_speed)
-    initialize_event_queue
   end
 end
 

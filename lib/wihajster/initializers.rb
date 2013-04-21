@@ -1,7 +1,21 @@
 module Wihajster::Initializers
   attr_accessor :joystick, :event_queue, :printer
 
+  def initialize_rubygame
+    require 'rubygame'
+    @rubygame_ready = true
+  rescue Rubygame::SDLError => e
+    ui.log :initializer, "Cannot initialize rubygame becouse of: #{e}."
+    ui.log :initializer, "Some features like joystick support or desktop ui will be disabled"
+  end
+
+  def rubygame_ready?
+    !!@rubygame_ready
+  end
+
   def joystick(joystick_number=nil)
+    return unless rubygame_ready?
+
     joystick_number ||= begin 
       joysticks = Rubygame::Joystick.num_joysticks.times.map do |i|
         [i, Rubygame::Joystick.get_name(i).gsub(/\s+/, ' ').strip]
@@ -27,10 +41,5 @@ module Wihajster::Initializers
     else
       ui.log :initializer, "Failed to initialize printer"
     end
-  end
-
-  def initialize_event_queue
-    @event_queue = Rubygame::EventQueue.new
-    @event_queue.enable_new_style_events
   end
 end
