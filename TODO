@@ -1,8 +1,17 @@
-1. Stop fucking around. DONE.
+TOP LEVEL:
+
+1. Stop fucking around. Back to ALMOST.
 2. Connect to printer. DONE.
 3. Emmit commands to printer. ALMOST. Fix concurency.
 4. Allow emmiting commands by console. STARTED.
-5. Allow loading scripts.
+5. Allow loading scripts. ALMOST
 6. Generate documentation for methods. ALMOST. Add generation of codes to yard.
-7. Allow to steer with gamepad. STARTED.
+7. Allow to steer with gamepad. ALMOST
 8. Add opengl visualization of scripts. (simple version).
+
+ALSO:
+
+1. Fix instantization of app and lib. Make sure there's ONE master object. there should be no possiblity of instantizing two event loops or ui's
+2. Move commands from bin to lib/wihajster.rb ?
+3. Add fucking tests already.
+4. Auto reloading of scripts using guard lib.
