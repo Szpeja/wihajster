@@ -14,17 +14,31 @@ class WihajsterApp
   include Wihajster
   include Wihajster::Initializers
   include Wihajster::Reloader
-  include Wihajster::EventLoop
 
   def console
     prepare
-    Thread.new{ run_event_queue }
+    event_loop.load_scripts
+    Thread.new{ event_loop.run }
     pry self
   end
 
   def run(serial_port=nil, joystick_number=nil, printer_speed=115200)
     prepare(serial_port, joystick_number, printer_speed)
-    run_event_queue
+    event_loop.load_scripts
+    event_loop.run
+  end
+
+  def calibrate(joystick_number=nil)
+    prepare(nil, joystick_number)
+    event_loop.add_handler Wihajster::Calibration
+    event_loop.run
+  end
+
+  def events_test(joystick_number=nil)
+    prepare(nil, joystick_number)
+    require 'wihajster/calibration/events_test'
+    event_loop.add_handler Wihajster::Calibration::EventsTest
+    event_loop.run
   end
 
   protected

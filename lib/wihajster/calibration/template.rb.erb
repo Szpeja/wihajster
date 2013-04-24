@@ -1,0 +1,65 @@
+# encoding: utf-8
+module JoystickEvents
+  # Called each time module is loaded.
+  def self.included(base)
+    Wihajster.ui.say "Joystick events loaded."
+  end
+    
+  # Called ONCE when joystick button is pressed.
+  def joystick_button_pressed(event)
+    case event.button<% @buttons.each do |id, description| %>
+    when <%= id.inspect %> # Button <%= description %>
+      ui.say "Button <%= description %> pressed."
+    <% end %>end
+  end
+
+  # Called every tick/frame (10 times per second) when joystick button is pressed.
+  #
+  # Second parameter gives us actual number of miliseconds passed (should be around 100),
+  # and can be used to fine tune length of movement
+  def joystick_button_held(event, miliseconds)
+    case event.button<% @buttons.each do |id, description| %>
+    when <%= id.inspect %> # Button <%= description %>
+    <% end %>end
+  end
+  <% if @hats.length > 0 %>
+
+  # Called when joystick hat is moved.
+  #
+  # Event parameters:
+  #
+  # hat:: (0..3)
+  # direction:: [nil, :up, :down, :left, :right]
+  # horizontal:: [0, -1, 1]
+  # vertical:: [0, -1, 1]
+  #
+  def joystick_hat_moved(event)
+    case event.hat<% @hats.each do |id, description| %>
+    when <%= id.inspect %> # <%= description %>
+      case event.direction
+      when :up
+      when :down
+      when :left
+      when :right
+      when nil
+      end
+    <% end %>end
+  end
+  <% end %><% if @axis.length > 0 %>
+
+  # Called when joystick axis position is moved.
+  #
+  # Event parameters 
+  #
+  # axis:: (0..5)
+  # value:: (-1.0..1.0)
+  #
+  def joystick_axis_moved(event)
+    case event.axis<% @axis.each do |id, description| %>
+    when <%= id.inspect %> # <%= description %>
+    <% end %>end
+  end
+  <% end %>
+end
+
+WihajsterApp.instance.event_loop.add_handler(JoystickEvents)

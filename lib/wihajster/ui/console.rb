@@ -37,4 +37,8 @@ class Wihajster::Ui::Console
   def log(type, message)
     say "[#{type}] #{message}"
   end
+
+  def event(ev)
+    say "Event: #{ev.name} #{ev.attributes.inspect}"
+  end
 end

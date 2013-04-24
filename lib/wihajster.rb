@@ -23,6 +23,10 @@ module Wihajster
     @ui ||= Ui.init(:console)
   end
 
+  def event_loop
+    @event_loop ||= EventLoop.new
+  end
+
   def load_libraries(base="")
     to_load = Dir.glob(File.join(root, "lib/wihajster/#{base}", "*.rb")).to_a
     failed_path, exceptions = nil, {}

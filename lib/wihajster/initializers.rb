@@ -16,6 +16,12 @@ module Wihajster::Initializers
       require 'rubygame'
     end
     
+    Rubygame::Events.constants.each do |name|
+      Rubygame::Events.const_get(name).send(:include, Wihajster::RubygameExtensions)
+    end
+
+    setup_rubygame
+
     @rubygame_ready = true
   rescue Rubygame::SDLError => e
     ui.log :initializer, "Cannot initialize rubygame becouse of: #{e}."
@@ -54,5 +60,24 @@ module Wihajster::Initializers
     else
       ui.log :initializer, "Failed to initialize printer"
     end
+  end
+
+  def setup_rubygame
+    @event_queue = Rubygame::EventQueue.new
+    @event_queue.enable_new_style_events
+
+    @clock = Rubygame::Clock.new
+    @clock.target_framerate = 10
+
+    # Adjust the assumed granularity to match the system.
+    # This helps minimize CPU usage on systems with clocks
+    # that are more accurate than the default granularity.
+    
+    ui.log :initializer, "Calibrating clock"
+
+    @clock.calibrate
+    
+    # Make Clock#tick return a ClockTicked event.
+    @clock.enable_tick_events
   end
 end
