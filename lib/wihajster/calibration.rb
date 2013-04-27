@@ -12,18 +12,18 @@ module Wihajster::Calibration
 
   # Joystick events:
   #
-  # * JoystickButtonPressed {:button=>0}
-  # * JoystickButtonReleased {:button=>0}
-  # * JoystickHatMoved {:hat=>0, :direction=>:up, :horizontal=>0, :vertical=>-1}
-  # * JoystickHatMoved {:hat=>0, :direction=>nil, :horizontal=>0, :vertical=>0}
-  # * JoystickHatMoved {:hat=>0, :direction=>:left, :horizontal=>-1, :vertical=>0}
-  # * JoystickHatMoved {:hat=>0, :direction=>nil, :horizontal=>0, :vertical=>0}
-  # * JoystickHatMoved {:hat=>0, :direction=>:down, :horizontal=>0, :vertical=>1}
-  # * JoystickHatMoved {:hat=>0, :direction=>nil, :horizontal=>0, :vertical=>0}
-  # * JoystickHatMoved {:hat=>0, :direction=>:right, :horizontal=>1, :vertical=>0}
-  # * JoystickHatMoved {:hat=>0, :direction=>nil, :horizontal=>0, :vertical=>0}
-  # * JoystickAxisMoved {:axis=>3, :value=>1.0}  Value is from -1.0 to 10
-  # * JoystickAxisMoved {:axis=>3, :value=>-1.0} Axis number can be from 0 to 3
+  # * JoystickButtonPressed  button: 0
+  # * JoystickButtonReleased button: 0
+  # * JoystickHatMoved hat: 0, direction: :up, horizontal: 0, vertical: -1
+  # * JoystickHatMoved hat: 0, direction: nil, horizontal: 0, vertical: 0
+  # * JoystickHatMoved hat: 0, direction: :left, horizontal: -1, vertical: 0
+  # * JoystickHatMoved hat: 0, direction: nil, horizontal: 0, vertical: 0
+  # * JoystickHatMoved hat: 0, direction: :down, horizontal: 0, vertical: 1
+  # * JoystickHatMoved hat: 0, direction: nil, horizontal: 0, vertical: 0
+  # * JoystickHatMoved hat: 0, direction: :right, horizontal: 1, vertical: 0
+  # * JoystickHatMoved hat: 0, direction: nil, horizontal: 0, vertical: 0
+  # * JoystickAxisMoved axis: 3, value: 1.0  Value is from -1.0 to 10
+  # * JoystickAxisMoved axis: 3, value: -1.0 Axis number can be from 0 to 3
   #
   def process_event(event)
     case event

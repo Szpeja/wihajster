@@ -8,7 +8,7 @@ require 'thread'
 # gcode("X000")      | Got "ok" from printer
 # can_write? => true | can_write? => true
 # send_to_printer    | send_to_printer
-# @can_send => 0     | @can_send => -1
+# can_send => 0     | can_send => -1
 #
 class Wihajster::Printer
   attr_reader :device, :speed, :sp
