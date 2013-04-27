@@ -2,6 +2,13 @@
 
 guard :shell do
   watch(%r{lib/.+\.rb}) do |m|
-    `bin/wihajster test_run && echo "Started!" || echo "Failed to start!"`
+    result = `bin/wihajster test_run`
+    if $? == 0
+      n result, "Started!", :success
+    else
+      n result, "Failed to start!", :failed
+    end
+  
+    result
   end
 end
