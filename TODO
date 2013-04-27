@@ -1,16 +1,17 @@
 TOP LEVEL:
 
-1. Stop fucking around. Back to ALMOST.
-2. Connect to printer. DONE.
-3. Emmit commands to printer. ALMOST. Fix concurency.
-4. Allow emmiting commands by console. STARTED.
-5. Allow loading scripts. ALMOST
-6. Generate documentation for methods. ALMOST. Add generation of codes to yard.
-7. Allow to steer with gamepad. ALMOST
-8. Add opengl visualization of scripts. (simple version).
++ Stop fucking around.
++ Connect to printer. DONE.
+- Emmit commands to printer. ALMOST. Fix concurency.
+- Allow emmiting commands by console. STARTED.
++ Allow loading scripts. DONE
+- Generate documentation for methods. ALMOST. Add generation of codes to yard.
++ Allow to steer with gamepad.
+- Emit proper commands on gamepad moves.
+- Add proper tests.
+- Add opengl visualization of scripts. (simple version).
 
 ALSO:
 
 + Fix instantization of app and lib. Make sure there's ONE master object. there should be no possiblity of instantizing two event loops or ui's
-- Add fucking tests already.
 + Auto reloading of scripts using guard lib.

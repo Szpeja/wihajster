@@ -2,13 +2,18 @@
 
 guard :shell do
   watch(%r{lib/.+\.rb}) do |m|
-    result = `bin/wihajster test_run`
+    `ruby -c #{m[0]}`
     if $? == 0
-      n result, "Started!", :success
+      result = `bin/wihajster test_run`
+      if $? == 0
+        n "Changed: #{m[0]}", "Test run works!", :success
+      else
+        n "Changed: #{m[0]}", "Test run failed to start!", :failed
+      end
     else
-      n result, "Failed to start!", :failed
+      n m[0], "Invalid syntax!", :failed
     end
-  
+    
     result
   end
 end
