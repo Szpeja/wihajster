@@ -130,33 +130,93 @@ class Wihajster::EventLoop
     end
   end
 
-  attr_accessor :keep_running, :runner, :runner_thread
+  attr_accessor :keep_running, :runner, :runner_thread, :profile
 
   def initialize
+    @profile = Wihajster.profile
     @keep_running = true
     @runner = Runner.new
   end
 
+  attr_writer :scripts_path
+  def scripts_path
+    @scripts_path ||= File.join(Wihajster.working_dir, profile)
+  end
+
+  def running?
+    @keep_running && @runner && @runner.running?
+  end
+
+  def load_script(script)
+    ui.log :loading_script, script
+
+    load(script)
+  rescue => e
+    ui.exception(e)
+    false
+  end
+
+  def load_scripts
+    Dir.glob(File.join(scripts_path, "*.rb")) do |script|
+      load_script(script)
+    end
+  end
+
+  def reload_scripts!
+    reload! do
+      load_scripts
+    end
+  end
+
+  def monitor_scripts
+    callback = lambda do |modified, added, removed|
+      if removed.any?
+        reload_scripts
+      else
+        (added + modified).uniq.each do |path|
+          if load_script(path)
+            ui.log :script_loaded, "Loaded script at path #{path}"
+          end
+        end
+      end
+    end 
+
+    ui.log :scripts_monitoring, "Started monitoring #{scripts_path}"
+    Listen.to(scripts_path, :filter => /\.rb$/).change(&callback).start(false)
+  end
+
   def add_handler(event_module)
+    ui.log :added_handler, event_module.to_s
     runner.extend(event_module)
   end
 
   def run!(non_block = false)
     @runner_thread = Thread.new do
-      runner.run while @keep_running
+      while @keep_running
+        runner.run
+      end
     end
-    @runner_thread.wait unless non_block
+    @runner_thread.join unless non_block
 
     @runner_thread
   end
 
-  def reload!
-    runner.stop
+  # Reloads runner
+  def reload!(&on_load)
+    Thread.exclusive do
+      @previous_runner = runner
+      @runner = Runner.new
+      on_load.call if on_load
+      @previous_runner.stop
+    end
+
+    self
   end
 
   def stop
     @keep_running = false
     runner.stop
+    @runner_thread.join
   end
 
   def stop!

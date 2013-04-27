@@ -53,8 +53,8 @@ module Wihajster::Initializers
   end
 
   def initialize_event_loop(profile="", monitor=:monitor)
-    load_scripts(profile)
-    monitor_scripts(profile) if monitor
+    event_loop.load_scripts(profile)
+    event_loop.monitor_scripts(profile) if monitor
   end
 
   def setup_rubygame
