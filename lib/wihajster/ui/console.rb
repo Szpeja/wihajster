@@ -38,6 +38,11 @@ class Wihajster::Ui::Console
     say "[#{type}] #{message}"
   end
 
+  def exception(e, doing=nil)
+    say "Got exception #{e.class.name}: #{e}#{doing ? " while #{doing}.": "."}"
+    say "  "+e.backtrace.join("\n  ")
+  end
+
   def event(ev)
     say "Event: #{ev.name} #{ev.attributes.inspect}"
   end

@@ -110,6 +110,6 @@ module JoystickEvents
     when 4 # Prawy Pion
     end
   end
-end
 
-WihajsterApp.instance.event_loop.add_handler(JoystickEvents)
+  Wihajster.add_event_handler(self)
+end

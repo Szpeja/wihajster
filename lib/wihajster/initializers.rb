@@ -1,16 +1,6 @@
 module Wihajster::Initializers
   attr_accessor :joystick, :event_queue, :printer
 
-  def silence_stream(stream)
-    old_stream = stream.dup
-    stream.reopen('log/sdl_error.log')
-    stream.sync = true
-
-    yield
-  ensure
-    stream.reopen(old_stream)
-  end
-
   def initialize_rubygame
     silence_stream(STDERR) do
       require 'rubygame'
@@ -62,6 +52,11 @@ module Wihajster::Initializers
     end
   end
 
+  def initialize_event_loop(profile="", monitor=:monitor)
+    load_scripts(profile)
+    monitor_scripts(profile) if monitor
+  end
+
   def setup_rubygame
     @event_queue = Rubygame::EventQueue.new
     @event_queue.enable_new_style_events
@@ -79,5 +74,17 @@ module Wihajster::Initializers
     
     # Make Clock#tick return a ClockTicked event.
     @clock.enable_tick_events
+  end
+
+  protected
+
+  def silence_stream(stream)
+    old_stream = stream.dup
+    stream.reopen('log/sdl_error.log')
+    stream.sync = true
+
+    yield
+  ensure
+    stream.reopen(old_stream)
   end
 end

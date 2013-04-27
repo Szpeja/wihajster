@@ -15,39 +15,54 @@ class WihajsterApp
   include Wihajster::Initializers
   include Wihajster::Reloader
 
-  def console
-    prepare
-    event_loop.load_scripts
-    Thread.new{ event_loop.run }
+  def console(profile="")
+    prepare(profile)
+
+    event_loop.run!(:non_block)
     pry self
   end
 
-  def run(serial_port=nil, joystick_number=nil, printer_speed=115200)
-    prepare(serial_port, joystick_number, printer_speed)
-    event_loop.load_scripts
-    event_loop.run
+  def run(profile="")
+    prepare(profile)
+
+    event_loop.run!
   end
 
-  def calibrate(joystick_number=nil)
-    prepare(nil, joystick_number)
-    event_loop.add_handler Wihajster::Calibration
-    event_loop.run
+  def calibrate(profile="")
+    prepare(profile)
+
+    # We need to reload event loop so we clear all scripts
+    # loaded by a #initialize_event_loop
+    event_loop.reload!
+    add_event_handler Wihajster::Calibration
+
+    event_loop.run!
   end
 
-  def events_test(joystick_number=nil)
-    prepare(nil, joystick_number)
+  def events_test(profile="")
+    prepare(profile)
+
+    # We need to reload event loop so we clear all scripts
+    # loaded by a #initialize_event_loop
+    event_loop.reload!
+
     require 'wihajster/calibration/events_test'
-    event_loop.add_handler Wihajster::Calibration::EventsTest
-    event_loop.run
+    add_event_handler Wihajster::Calibration::EventsTest
+
+    event_loop.run!
   end
 
   protected
 
-  def prepare(serial_port=nil, joystick_number=nil, printer_speed=115200)
+  def prepare
+    Wihajster.profile = profile
+
     enable_reloading
+
     initialize_rubygame
-    initialize_joystick(joystick_number)
-    initialize_printer(serial_port, printer_speed)
+    initialize_joystick(config.joystick.id)
+    initialize_printer(config.printer.device, config.printer.speed)
+    initialize_event_loop(profile, config.script.monitor)
   end
 end
 
