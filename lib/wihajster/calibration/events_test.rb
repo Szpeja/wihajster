@@ -1,6 +1,8 @@
 module Wihajster::Calibration::EventsTest
   def process_event(event)
-    p event
+    unless event.is_a?(Rubygame::Events::ClockTicked)
+      p event
+    end
 
     super
   end 

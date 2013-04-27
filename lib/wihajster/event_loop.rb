@@ -70,11 +70,11 @@ class Wihajster::EventLoop
     def joystick_axis_moved(event)      end
     def joystick_ball_moved(event)      end
 
-    def joystick_button_held(event, miliseconds) end
+    def joystick_button_held(event, milliseconds) end
 
     def clock_ticked(tick_event)
       pressed_button.each do |button, event|
-        joystick_button_held(event, tick_event.miliseconds)
+        joystick_button_held(event, tick_event.milliseconds)
       end
     end
   end
@@ -130,15 +130,23 @@ class Wihajster::EventLoop
     def stop
       @stop = true
     end
+
+    def extended_modules
+      (class << self; self end).included_modules
+    end
   end
 
-  attr_accessor :keep_running, :runner, :runner_thread, :profile
+  attr_accessor :keep_running, :runner_thread, :profile
   attr_reader :event_queue, :clock
 
   def initialize
     @profile = Wihajster.profile
     @keep_running = true
-    @runner = Runner.new(self)
+
+    trap("SIGINT") do
+      runner.process_event(Interrupt.new)
+      exit!
+    end
   end
 
   attr_writer :scripts_path
@@ -148,6 +156,14 @@ class Wihajster::EventLoop
 
   def running?
     @keep_running && @runner && @runner.running?
+  end
+
+  def handlers
+    runner.extended_modules - Runner.ancestors
+  end
+
+  def runner
+    @runner ||= Runner.new(self)
   end
 
   def setup_rubygame
@@ -170,15 +186,19 @@ class Wihajster::EventLoop
   end
 
   def load_script(script)
-    ui.log :loading_script, script
+    ui.log :script, :loading, script
 
     load(script)
+
+    ui.log :script, :loaded, script
   rescue => e
     ui.exception(e)
     false
   end
 
   def load_scripts
+    ui.log :scripts, :loading, "Loading scripts at #{scripts_path}"
+
     Dir.glob(File.join(scripts_path, "*.rb")) do |script|
       load_script(script)
     end
@@ -192,27 +212,31 @@ class Wihajster::EventLoop
 
   def monitor_scripts
     callback = lambda do |modified, added, removed|
-      if removed.any?
-        reload_scripts
-      else
-        (added + modified).uniq.each do |path|
-          if load_script(path)
-            ui.log :script_loaded, "Loaded script at path #{path}"
+      begin
+        if removed.any?
+          reload_scripts!
+        else
+          (added + modified).uniq.each do |path|
+            load_script(path)
           end
         end
+      rescue => e
+        ui.exception(e)
       end
     end 
 
-    ui.log :scripts_monitoring, "Started monitoring #{scripts_path}"
+    ui.log :scripts, :monitoring, "Started monitoring #{scripts_path}"
     Listen.to(scripts_path, :filter => /\.rb$/).change(&callback).start(false)
   end
 
   def add_handler(event_module)
-    ui.log :added_handler, event_module.to_s
+    ui.log :event_loop, :added_handler, event_module.to_s
     runner.extend(event_module)
   end
 
   def run!(non_block = false)
+    ui.log :event_loop, :running, "Running event loop"
+
     @runner_thread = Thread.new do
       while @keep_running
         runner.run
@@ -225,6 +249,8 @@ class Wihajster::EventLoop
 
   # Reloads runner
   def reload!(&on_load)
+    ui.log :event_loop, :reloading, "Reloading event loop"
+
     Thread.exclusive do
       @previous_runner = runner
       @runner = Runner.new(self)
@@ -236,6 +262,8 @@ class Wihajster::EventLoop
   end
 
   def stop
+    ui.log :event_loop, :stopping, "Stopping event loop"
+
     @keep_running = false
     runner.stop
     @runner_thread.join

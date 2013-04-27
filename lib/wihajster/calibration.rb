@@ -26,20 +26,23 @@ module Wihajster::Calibration
   # * JoystickAxisMoved axis: 3, value: -1.0 Axis number can be from 0 to 3
   #
   def process_event(event)
-    case event
-    when Interrupt
+    if event.is_a?(Interrupt)
       save_calibration
-    else
+    elsif event.respond_to?(:joystick_event?) && event.joystick_event?
       type = [:button, :hat, :axis, :ball].detect{|k| event.attributes[k]}
       id = event.attributes[type]
 
       unless events[type: type, id: id]
+        if event.is_a?(Rubygame::Events::JoystickAxisMoved)
+          return unless event.value.abs > 0.75
+        end
+
         ui.event(event)
-        events[type: type, id: id] = ui.ask("Description: ")
+        description = ui.ask("Description: ")
+        return unless description.strip.length > 0
+        events[type: type, id: id] = description
       end
     end
-
-    super
   end
 
   def calibration_template
@@ -55,8 +58,11 @@ module Wihajster::Calibration
 
     ui.log :calibration, result
 
-    FileUtils.mkdir_p "script"
-    File.open("script/joystick_events.rb", "w") do |f|
+    if Wihajster.profile != ""
+      FileUtils.mkdir_p Wihajster.profile
+    end
+
+    File.open(Wihajster.join(Wihajster.profile, "joystick_events.rb"), "w") do |f|
       f.write result
     end
   end

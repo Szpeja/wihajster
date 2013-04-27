@@ -38,8 +38,9 @@ class Wihajster::Ui::Console
     nil
   end
 
-  def log(type, message)
-    say "[#{type}] #{message}"
+  def log(*args)
+    *types, message = *args
+    say "[#{types.map(&:to_s).join(".")}] #{message}"
   end
 
   def exception(e, doing=nil)
