@@ -5,7 +5,11 @@ require "bundler"
 
 require File.expand_path '../../lib/wihajster', __FILE__
 
+unless File.exist?("Gemfile")
+  ENV['BUNDLE_GEMFILE'] = File.join(Wihajster.root, "Gemfile")
+end
 Bundler.require(:default, Wihajster.env)
+
 Wihajster.load_libraries
 
 class WihajsterApp
@@ -34,12 +38,16 @@ class WihajsterApp
     # We need to reload event loop so we clear all scripts
     # loaded by a #initialize_event_loop
     event_loop.reload!
-    add_event_handler Wihajster::Calibration
+    Wihajster.add_event_handler Wihajster::Calibration
 
     event_loop.run!
   end
 
   def events_test(profile="")
+    Wihajster.profile = profile
+    Wihajster.configuration.temporary!
+    Wihajster.config.scripts.monitor = false
+
     prepare(profile)
 
     # We need to reload event loop so we clear all scripts
@@ -47,14 +55,27 @@ class WihajsterApp
     event_loop.reload!
 
     require 'wihajster/calibration/events_test'
-    add_event_handler Wihajster::Calibration::EventsTest
+    Wihajster.add_event_handler Wihajster::Calibration::EventsTest
 
+    event_loop.run!
+  end
+
+  def test_run
+    Wihajster.profile = "test_run"
+    Wihajster.configuration.temporary!
+    Wihajster.config.joystick.id = 0
+    Wihajster.config.scripts.monitor = false
+
+    prepare("test_run")
+
+    event_loop.reload! # Clean event loop
+    Thread.new{ sleep 0.3; event_loop.stop }
     event_loop.run!
   end
 
   protected
 
-  def prepare
+  def prepare(profile)
     Wihajster.profile = profile
 
     enable_reloading
@@ -62,7 +83,7 @@ class WihajsterApp
     initialize_rubygame
     initialize_joystick(config.joystick.id)
     initialize_printer(config.printer.device, config.printer.speed)
-    initialize_event_loop(profile, config.script.monitor)
+    initialize_scripts(profile, config.scripts.monitor)
   end
 end
 
@@ -76,7 +97,12 @@ def start(app)
     begin                                                                                                                                                   
       app.send(method, *ARGV[1..-1])
     rescue ArgumentError => e
-      puts "Could not call action #{method} - #{e}"
+      $stderr.puts "Could not call action #{method} - #{e}"
+      exit 2
+    rescue => e
+      $stderr.puts "Failed to load Wihajster"
+      $stderr.puts "#{e.class.name} #{e}\n  #{e.backtrace.join("\n  ")}"
+      exit 1
     end
   else
     puts "Usage: #{__FILE__} [action]"

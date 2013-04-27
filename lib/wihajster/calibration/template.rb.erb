@@ -7,22 +7,13 @@ module JoystickEvents
     
   # Called ONCE when joystick button is pressed.
   def joystick_button_pressed(event)
+    super # Call other event handlers
+
     case event.button<% @buttons.each do |id, description| %>
     when <%= id.inspect %> # Button <%= description %>
       ui.say "Button <%= description %> pressed."
     <% end %>end
   end
-
-  # Called every tick/frame (10 times per second) when joystick button is pressed.
-  #
-  # Second parameter gives us actual number of miliseconds passed (should be around 100),
-  # and can be used to fine tune length of movement
-  def joystick_button_held(event, miliseconds)
-    case event.button<% @buttons.each do |id, description| %>
-    when <%= id.inspect %> # Button <%= description %>
-    <% end %>end
-  end
-  <% if @hats.length > 0 %>
 
   # Called when joystick hat is moved.
   #
@@ -34,6 +25,8 @@ module JoystickEvents
   # vertical:: [0, -1, 1]
   #
   def joystick_hat_moved(event)
+    super # Call other event handlers
+
     case event.hat<% @hats.each do |id, description| %>
     when <%= id.inspect %> # <%= description %>
       case event.direction
@@ -55,11 +48,43 @@ module JoystickEvents
   # value:: (-1.0..1.0)
   #
   def joystick_axis_moved(event)
+    super # Call other event handlers
+
     case event.axis<% @axis.each do |id, description| %>
     when <%= id.inspect %> # <%= description %>
     <% end %>end
   end
-  <% end %>
-end
+<% end %>
 
-WihajsterApp.instance.event_loop.add_handler(JoystickEvents)
+  # Called every tick/frame (10 times per second) when joystick button is pressed.
+  #
+  # Second parameter gives us actual number of miliseconds passed since last tick 
+  # (should be around 100), and can be used to fine tune length of movement
+  def joystick_button_held(event, miliseconds)
+    super # Call other events
+
+    case event.button<% @buttons.each do |id, description| %>
+    when <%= id.inspect %> # Button <%= description %>
+    <% end %>end
+  end
+  <% if @hats.length > 0 %>
+
+  # Called when every timer tick (by default every 100 miliseconds).
+  # Can be used to move based on axis position, report temperature etc.
+  # 
+  # Event parameters:
+  # 
+  # milliseconds: The time since the last tick, in milliseconds.
+  # seconds: time since the last tick, in seconds. 
+  #
+  def clock_ticked(tick_event)
+    super # Call other event handlers
+
+    strong_axis = axis_position.select{|axis, value| value > 0.5}
+    if strong_axis.any?
+      # Move in direction of strong axis
+    end  
+  end
+
+  Wihajster.add_event_handler(self)
+end

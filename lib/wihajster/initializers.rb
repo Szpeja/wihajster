@@ -10,12 +10,16 @@ module Wihajster::Initializers
       Rubygame::Events.const_get(name).send(:include, Wihajster::RubygameExtensions)
     end
 
-    setup_rubygame
+    event_loop.setup_rubygame
 
     @rubygame_ready = true
-  rescue Rubygame::SDLError => e
-    ui.log :initializer, "Cannot initialize rubygame becouse of: #{e}."
-    ui.log :initializer, "Some features like joystick support or desktop ui will be disabled"
+  rescue => e
+    if defined?(Rubygame::SDLError) && e.is_a?(Rubygame::SDLError)
+      ui.log :initializer, "Cannot initialize rubygame becouse of: #{e}."
+      ui.log :initializer, "Some features like joystick support or desktop ui will be disabled"
+    else
+      raise(e)
+    end
   end
 
   def rubygame_ready?
@@ -52,34 +56,16 @@ module Wihajster::Initializers
     end
   end
 
-  def initialize_event_loop(profile="", monitor=:monitor)
-    event_loop.load_scripts(profile)
-    event_loop.monitor_scripts(profile) if monitor
-  end
-
-  def setup_rubygame
-    @event_queue = Rubygame::EventQueue.new
-    @event_queue.enable_new_style_events
-
-    @clock = Rubygame::Clock.new
-    @clock.target_framerate = 10
-
-    # Adjust the assumed granularity to match the system.
-    # This helps minimize CPU usage on systems with clocks
-    # that are more accurate than the default granularity.
-    
-    ui.log :initializer, "Calibrating clock"
-
-    @clock.calibrate
-    
-    # Make Clock#tick return a ClockTicked event.
-    @clock.enable_tick_events
+  def initialize_scripts(profile="", monitor=:monitor)
+    event_loop.load_scripts
+    event_loop.monitor_scripts if monitor
   end
 
   protected
 
   def silence_stream(stream)
     old_stream = stream.dup
+    FileUtils.mkdir_p("log")
     stream.reopen('log/sdl_error.log')
     stream.sync = true
 

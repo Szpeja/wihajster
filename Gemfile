@@ -32,6 +32,7 @@ group :development do
   win_gem   'rb-fchange'
 
   gem "guard"       # Monitoring changes to application files.
+  gem "guard-shell" 
   gem "libnotify"   # Notfication
 end
 

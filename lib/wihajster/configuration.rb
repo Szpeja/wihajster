@@ -1,18 +1,19 @@
 require 'yaml'
 
 class Wihajster::Configuration
-  attr_writer :config_name, :config_path, :config
+  attr_writer :config_name, :config_path
 
   class OpenStructHash < Hash
     def method_missing(name, *args, &block)
       return(super) if block
 
+      sname, symname = name.to_s, name.to_sym
       case args.length
       when 0
-        self[name]
+        self[symname]
       when 1
-       if name[-1..-1] == "="
-         self[name[0..-2]] = args.first
+       if sname[-1..-1] == "="
+         self[sname[0..-2].to_sym] = args.first
        else
          super
        end
@@ -36,9 +37,8 @@ class Wihajster::Configuration
   end
 
   def initialize(profile)
-    @profile = profile
     @auto_save = true
-    self.load
+    self.profile = profile
   end
 
   def config_name
@@ -46,26 +46,15 @@ class Wihajster::Configuration
   end
 
   def config_path
-    @config_path || File.join(Wihajster.working_dir, @config_name)
+    @config_path || File.join(Wihajster.working_dir, config_name)
   end
 
-  def config
-    @config ||= convert(default)
+  def data
+    @data
   end
 
   def to_yaml
-    YAML.dump(@config)
-  end
-
-  def [](key)
-    config[key]
-  end
-
-  def []=(key, value)
-    config[key]=value
-    save if @auto_save
-
-    value
+    YAML.dump(@data)
   end
 
   def convert(object)
@@ -74,10 +63,10 @@ class Wihajster::Configuration
       object
     when Hash
       hash = {}
-      object.each{|k,v| hash[k] = recursive_ostruct(v)}
-      OpenStructHash.new(hash)
+      object.each{|k,v| hash[k] = convert(v)}
+      OpenStructHash[hash]
     when Array
-      object.map {|e| recursive_ostruct(e) }
+      object.map {|e| convert(e) }
     else
       object
     end
@@ -86,7 +75,9 @@ class Wihajster::Configuration
   def load
     if File.exist?(config_path)
       @raw_config = YAML.load_file(config_path)
-      @config = convert( @raw_config )
+      @data = convert( @raw_config )
+    else
+      @data = convert( default )
     end
 
     self
@@ -105,5 +96,10 @@ class Wihajster::Configuration
 
   def temporary!
     @auto_save = false
+  end
+
+  def profile=(profile)
+    @profile = profile
+    load
   end
 end

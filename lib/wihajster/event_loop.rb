@@ -1,4 +1,6 @@
 class Wihajster::EventLoop
+  include Wihajster
+
   module DefaultHandlers
     # Process event from Rubygame.
     #
@@ -71,7 +73,7 @@ class Wihajster::EventLoop
     def joystick_button_held(event, miliseconds) end
 
     def clock_ticked(tick_event)
-      pressed_buttons.each do |button, event|
+      pressed_button.each do |button, event|
         joystick_button_held(event, tick_event.miliseconds)
       end
     end
@@ -79,10 +81,13 @@ class Wihajster::EventLoop
 
   class Runner
     include DefaultHandlers
+    include Wihajster
 
-    def initialize
+    def initialize(event_loop)
       @running = false
       @stop = false
+      @clock = event_loop.clock
+      @event_queue = event_loop.event_queue
     end
 
     # Runs event queue with target framerate (10fps by default).
@@ -93,8 +98,6 @@ class Wihajster::EventLoop
     # On each event the #process_event method is called.
     # That method should be overriden to handle events.
     def run
-      return unless rubygame_ready?
-
       @running = true
 
       while true
@@ -114,8 +117,7 @@ class Wihajster::EventLoop
         end
       end
     rescue => e
-      puts "Got exception in event queue!"
-      puts "#{e.class}: #{e}\n  #{e.backtrace.join("\n  ")}"
+      Wihajster.ui.exception(e, "in event queue!")
       raise(e)
     ensure
       @running = false
@@ -131,11 +133,12 @@ class Wihajster::EventLoop
   end
 
   attr_accessor :keep_running, :runner, :runner_thread, :profile
+  attr_reader :event_queue, :clock
 
   def initialize
     @profile = Wihajster.profile
     @keep_running = true
-    @runner = Runner.new
+    @runner = Runner.new(self)
   end
 
   attr_writer :scripts_path
@@ -145,6 +148,25 @@ class Wihajster::EventLoop
 
   def running?
     @keep_running && @runner && @runner.running?
+  end
+
+  def setup_rubygame
+    @event_queue = Rubygame::EventQueue.new
+    @event_queue.enable_new_style_events
+
+    @clock = Rubygame::Clock.new
+    @clock.target_framerate = 10
+
+    # Adjust the assumed granularity to match the system.
+    # This helps minimize CPU usage on systems with clocks
+    # that are more accurate than the default granularity.
+    
+    ui.log :initializer, "Calibrating clock"
+
+    @clock.calibrate
+    
+    # Make Clock#tick return a ClockTicked event.
+    @clock.enable_tick_events
   end
 
   def load_script(script)
@@ -205,7 +227,7 @@ class Wihajster::EventLoop
   def reload!(&on_load)
     Thread.exclusive do
       @previous_runner = runner
-      @runner = Runner.new
+      @runner = Runner.new(self)
       on_load.call if on_load
       @previous_runner.stop
     end

@@ -12,6 +12,5 @@ TOP LEVEL:
 ALSO:
 
 + Fix instantization of app and lib. Make sure there's ONE master object. there should be no possiblity of instantizing two event loops or ui's
-- Move commands from bin to lib/wihajster.rb ?
 - Add fucking tests already.
 + Auto reloading of scripts using guard lib.

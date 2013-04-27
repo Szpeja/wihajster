@@ -37,7 +37,7 @@ module Wihajster
     end
 
     def profile=(new_profile)
-      if @profile
+      if @profile && @profile != new_profile
         raise "Changing of profile is not implemented (yet hopefully)"
       else
         @profile = new_profile || ""
@@ -45,8 +45,12 @@ module Wihajster
     end
     attr_reader :profile
 
+    def configuration
+      @configuration ||= Configuration.new(profile)
+    end
+
     def config
-      @config ||= Configuration.new(profile)
+      configuration.data
     end
  
     def add_event_handler(handler)
@@ -89,3 +93,4 @@ module Wihajster
     end
   end
 end
+

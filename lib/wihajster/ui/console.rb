@@ -16,6 +16,10 @@ class Wihajster::Ui::Console
       choice = choices.first
       choice.is_a?(Array) ? choice.first : choice
     else
+      unless $stdin.tty? && $stdout.tty?
+        raise ArgumentError, "Cannot make a choice in non interactive mode"
+      end
+
       responses = {}
       choices.to_a.each_with_index do |o, i|
         if o.is_a?(Array)

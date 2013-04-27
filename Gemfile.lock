@@ -37,6 +37,8 @@ GEM
       lumberjack (>= 1.0.2)
       pry (>= 0.9.10)
       thor (>= 0.14.6)
+    guard-shell (0.5.1)
+      guard (>= 1.1.0)
     highline (1.6.18)
     libnotify (0.8.0)
       ffi (>= 1.0.11)
@@ -76,6 +78,7 @@ DEPENDENCIES
   ffi-opengl!
   ffi-tcc!
   guard
+  guard-shell
   highline
   libnotify
   nokogiri
