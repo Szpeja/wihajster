@@ -1,16 +1,10 @@
 require 'thread'
+require 'monitor'
 
-# TODO: Make sure synchronization between of writes to printer is correct (use Monitor?)
-# problematic case:
-#
-# App Thread         | Communication Thread
-# ------------------------------------------
-# gcode("X000")      | Got "ok" from printer
-# can_write? => true | can_write? => true
-# send_to_printer    | send_to_printer
-# can_send => 0     | can_send => -1
-#
 class Wihajster::Printer
+  include MonitorMixin
+  include Wihajster
+
   attr_reader :device, :speed, :sp
 
   def self.devices
@@ -31,10 +25,6 @@ class Wihajster::Printer
 
     @send_queue = Queue.new
     @lines      = []
-  end
-
-  def ui
-    @ui ||= WihajsterApp.instance.ui
   end
 
   def connect
@@ -96,14 +86,6 @@ class Wihajster::Printer
     sleep(0.3);
   end
 
-  def reset
-    @lines.clear
-    @send_queue.clear
-    @line_nr = 0
-
-    gcode('M101')
-  end
-
   def hard_reset
     case @model
     when :reprap
@@ -115,7 +97,19 @@ class Wihajster::Printer
     reset
   end
 
-  def raw_gcode(lines)
+  def reset
+    @lines.clear
+    @send_queue.clear
+    @line_nr = 0
+
+    send_gcode('M101')
+  end
+
+  # Sends _raw_ line (from .gcode file) that MIGHT include gcode.
+  #
+  # This function checks line and if it detects gcode - uses send_gcode
+  # to send it to printer.
+  def send_raw_gcode(lines)
     lines.split("\n").each do line
       command = /^(\w\d+)/.match(line.strip)
       next unless command
@@ -124,7 +118,7 @@ class Wihajster::Printer
       if command == "M110"
         reset_queue
       else
-        gcode(command)
+        send_gcode(command)
       end
     end
   end
@@ -133,18 +127,20 @@ class Wihajster::Printer
   # RepRap Syntax: N<linenumber> <cmd> *<chksum>\n
   # Makerbot Syntax: <cmd>\n
   # Comments: ;<comment> OR (<comment>)
-  def gcode(gcode)
+  def send_gcode(gcode)
     @lines[@line_nr+=1] = gcode
 
     line = "N#{@line_nr} #{gcode} "
     checksum = line.each_byte.inject(0){|c, b| c ^= b }
     line = "#{line}*#{checksum}\n" #add checksum
     
-    if can_write?
-      send_to_printer(line)
-    else
-      ui.log :queued, line
-      @send_queue.push line
+    synchronize do
+      if can_write?
+        send_to_printer(line)
+      else
+        ui.log :queued, line
+        @send_queue.push line
+      end
     end
   end
 
@@ -197,7 +193,7 @@ class Wihajster::Printer
         @can_send = 1
       end
 
-      send_commands_from_queue if can_write?
+      send_commands_from_queue
     end
   rescue => e
     puts "Got exception in event communication thread!"
@@ -206,17 +202,25 @@ class Wihajster::Printer
     raise(e)
   end
 
+  # Sends as many commands as possible to machine.
   def send_commands_from_queue
-    [@can_send, @send_queue.length].min.times do
-      send_to_printer(@send_queue.pop)
+    synchronize do
+      return unless can_write?
+
+      while @can_send > 0 && @send_queue.length > 0
+        send_to_printer(@send_queue.pop)
+      end
     end
   end
 
+  # Sends single line to printer.
   def send_to_printer(line_to_send)
-    @can_send -= 1
+    synchronize do
+      ui.log :sending, line_to_send
 
-    ui.log :sending, line_to_send
-    @sp.write(line_to_send)
+      @can_send -= 1
+      @sp.write(line_to_send)
+    end
   end
 
   def communication_thread

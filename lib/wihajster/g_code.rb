@@ -37,8 +37,8 @@ module Wihajster
     end
 
     # Writes a command to a buffer.
-    def write_command(name, args)
-      write format_command(name, args)
+    def write_command(formated_command)
+      write formated_command
     end
 
     def baner

@@ -53,8 +53,20 @@
         <td class="no-padding">
           
             <dl class="compact">
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
             </dl>
           
         </td>
@@ -66,7 +78,7 @@ In this case move rapidly to X = 12 mm.  In fact, the RepRap firmware uses exact
         <td>
           <strong>Controlled move</strong>
           <br />
-          <code>controlled_move</code>
+          <code>move</code>
         </td>
         <td>
           <strong>Code:</strong>

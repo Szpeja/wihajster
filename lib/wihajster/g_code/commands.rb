@@ -44,7 +44,8 @@ require 'erb'
 # *:: Checksum. Used to check for communications errors.
 #
 module Wihajster::GCode::Commands
-  PARAMETERS = {
+  def self.parameters
+  {
     S: "Power parameter, such as the voltage to send to a motor",
     P: "Time  parameter, such as a time in millimetersseconds",
     R: "Temperature Parameter - used for temperatures in Celcius degrees",
@@ -56,6 +57,7 @@ module Wihajster::GCode::Commands
 
     F: "Format Feedrate in mm per minute. (Speed of print head movement)",
   }
+  end
 
   # Generates raw YAML file based on reprap g-code wiki entry.
   #
@@ -132,16 +134,29 @@ module Wihajster::GCode::Commands
   commands.each do |name, command|
     if command.supported
       define_method(command.method_name) do |options={}|
-        format_command(command.method_name, options)
+        fc = format_command(command, options)
+        write_command(fc)
       end
     end
   end
 
-  def format_command(name, options={})
-    command = Wihajster::GCode::Commands.commands[name]
-    arguments = command.accepts.select{|a| args[a] }.
-      map{|a| "#{a}#{args[a]}" } 
+  # Formats command into string validating parameters.
+  # Unrecognized parameters generate warnings.
+  def format_command(command, options={})
+    command.accepts.select{|a| !args[a] }.each do |a|
+      Wihajster.ui.log :gcode, command.code, "Unrecognized option - #{a} for #{command.name}"
+    end
+
+    Wihajster::GCode::Commands.parameters.
+      select{|name, desc| args[name]}.
+      map{|a, d| "#{a}#{args[a]}" } 
 
     [command.code, arguments].flatten.join(" ")
+  end
+
+  # Writes a gcode to output device.
+  # This method should be overriden in class that includes this module.
+  def write_command(formated_command)
+    Wihajster.ui.log(:gcode, :write, formated_command)
   end
 end

@@ -54,7 +54,7 @@
           <% if c.accepts.length > 0 %>
             <dl class="compact"><% c.accepts.each do |param| %>
               <dt><%= param %></dt>
-              <dd><%= PARAMETERS[param] %></dd>
+              <dd><%= parameters[param] %></dd>
             <%end%></dl>
           <% else %>
             &nbsp;
