@@ -5,7 +5,7 @@ module JoystickEvents
 
   # Called each time module is loaded.
   def self.extended(base)
-    Wihajster.ui.log :script, :extended, "Joystick events loaded."
+    Wihajster.ui.log :script, :extended, "Joystick events loaded. Check if ANALOG is ON :)"
     base.set_variables
   end
 
