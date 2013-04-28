@@ -1,6 +1,18 @@
 # More info at https://github.com/guard/guard#readme
 
 guard :shell do
+  watch(/commands\.wiki/) do
+    `rake gcode:wiki_to_yaml`
+  end
+
+  watch(/commands\.yml/) do
+    `rake gcode:doc`
+  end
+
+  watch(/doc\/.+/) do
+    `rake yaml`
+  end
+
   watch(%r{lib/.+\.rb}) do |m|
     `ruby -c #{m[0]}`
     if $? == 0

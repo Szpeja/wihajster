@@ -1,0 +1,67 @@
+<style>
+  #filecontents dl.compact {
+    padding: 0;
+    margin: 0;
+  }
+
+  #filecontents dl.compact dt { 
+    float: left;
+    width: 1em;
+    clear: left;
+  }
+
+  #filecontents dl.compact dd {
+    margin-left: 2em;
+    padding: 3px 1px;
+  }
+
+  #filecontents td.no-padding{
+    padding: 0;
+  }
+
+  th.method_name { width: 20%; }
+  th.code        { width: 20%; }
+  th.accepts     { width: 20%; }
+  th.description { width: 40%; }
+</style>
+
+<table>
+  <thead>
+    <tr>
+      <th class="method_name">Name / Method Name</th>
+      <th class="code">Code / Example</th>
+      <th class="accepts">Accepts</th>
+      <th class="description">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @commands.each do |name, c| %>
+      <tr>
+        <td>
+          <strong><%= c.name %></strong>
+          <br />
+          <code><%= c.method_name %></code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre><%= c.code %></pre>
+          <% if c.example %>
+            <strong>Example: </strong>
+            <pre><%= c.example %></pre>
+          <% end %>
+        </td>
+        <td class="no-padding">
+          <% if c.accepts.length > 0 %>
+            <dl class="compact"><% c.accepts.each do |param| %>
+              <dt><%= param %></dt>
+              <dd><%= PARAMETERS[param] %></dd>
+            <%end%></dl>
+          <% else %>
+            &nbsp;
+          <% end %>
+        </td>
+        <td><%= c.description %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

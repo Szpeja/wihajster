@@ -1,3 +1,5 @@
+require 'erb'
+
 # List of commands that can be sent to RepRap machine.
 #
 # Prepared based on http://reprap.org/wiki/G-code
@@ -55,28 +57,57 @@ module Wihajster::GCode::Commands
     F: "Format Feedrate in mm per minute. (Speed of print head movement)",
   }
 
-  def self.generate_yml
-    content = File.read(__FILE__.gsub('.rb', '.wiki')).
+  # Generates raw YAML file based on reprap g-code wiki entry.
+  def self.generate_yaml
+    raw_sections = File.read(__FILE__.gsub('.rb', '.wiki')).
       split(/^==/).
-      map{|l| /=*(.+):(.+)====(.+)/m.match(l)}.compact.
-      map do |r| 
-        desc = r[3].strip.gsub(/{\|.+?\|}/m, '').gsub(/\n\s+/m, "\n").strip 
-        name = r[2].strip
-        method_name = name.gsub(/\(.+\)/, '').strip.gsub(/\s+/,'_').downcase
-        code = r[1].strip
+      map{|l| /=*(.+):(.+)====(.+)/m.match(l)}.compact
 
-        {code: code, name: name, method_name: method_name, description: desc, accepts: PARAMETERS.keys }
+    sections = raw_sections.map do |r| 
+      desc = r[3].strip.gsub(/{\|.+?\|}/m, '').gsub(/\n\s+/m, "\n").strip 
+      name = r[2].strip
+      method_name = name.gsub(/\(.+\)/, '').strip.gsub(/\W+/,'_').downcase
+      code = r[1].strip
+
+      example_matcher = /^(Example:) ([\w .<>-]+?)(#.+)?$/
+      if match = example_matcher.match(desc)
+        example = match[2]
+        desc.sub!(example_matcher, '\3').sub('#', '')
       end
-    File.open(__FILE__.gsub('.rb', '.yml'), "w"){|f| f.write content.to_yaml }
+
+      potential_params = desc.scan(/\s([XYZEFSPR])\d*(?!\d)/).map{|m| m[0].to_sym}.uniq
+
+      {
+        code: code, 
+        name: name,
+        example: example, 
+        method_name: method_name, 
+        description: desc, 
+        accepts: potential_params,
+      }
+    end
+
+    File.open(__FILE__.gsub('.rb', '.yml'), "w"){|f| f.write sections.to_yaml }
   end
 
   def self.generate_help
+    require 'erb'
 
+    help_template_path = File.join(Wihajster.root, "assets", "g_code.html.erb")
+    help_template = File.read(help_template_path)
+
+    commands
+
+    help_table = ERB.new(help_template).result(binding)
+
+    File.open(File.join(Wihajster.root, "doc", "gcode.html"), "w") do |f|
+      f.write help_table
+    end
   end
 
   def self.commands
     @commands ||= 
-      YAML.load(__FILE__.gsub('.rb', '.yml')).
+      YAML.load_file(__FILE__.gsub('.rb', '.yml')).
       inject({}){|h, e| h[e[:name]] = OpenStruct.new(e); h }
   end
 
@@ -87,11 +118,19 @@ module Wihajster::GCode::Commands
     [command.code, arguments].flatten.join(" ")
   end
 
+  def commands
+    self.class.commands
+  end
+
   def method_missing(name, *args)
-    if self.class.commands.has_key?(name)
+    if respond_to?(name)
       format_command(name, args)
     else
       super
     end
   end 
+
+  def respond_to?(name)
+    commands.has_key?(name.to_s) || super
+  end
 end

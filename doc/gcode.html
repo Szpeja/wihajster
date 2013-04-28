@@ -1,0 +1,2824 @@
+<style>
+  #filecontents dl.compact {
+    padding: 0;
+    margin: 0;
+  }
+
+  #filecontents dl.compact dt { 
+    float: left;
+    width: 1em;
+    clear: left;
+  }
+
+  #filecontents dl.compact dd {
+    margin-left: 2em;
+    padding: 3px 1px;
+  }
+
+  #filecontents td.no-padding{
+    padding: 0;
+  }
+
+  th.method_name { width: 20%; }
+  th.code        { width: 20%; }
+  th.accepts     { width: 20%; }
+  th.description { width: 40%; }
+</style>
+
+<table>
+  <thead>
+    <tr>
+      <th class="method_name">Name / Method Name</th>
+      <th class="code">Code / Example</th>
+      <th class="accepts">Accepts</th>
+      <th class="description">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+      <tr>
+        <td>
+          <strong>Rapid move</strong>
+          <br />
+          <code>rapid_move</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G0</pre>
+          
+            <strong>Example: </strong>
+            <pre>G0 X12</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            </dl>
+          
+        </td>
+        <td>
+In this case move rapidly to X = 12 mm.  In fact, the RepRap firmware uses exactly the same code for rapid as it uses for controlled moves (see G1 below), as - for the RepRap machine - this is just as efficient as not doing so.  (The distinction comes from some old machine tools that used to move faster if the axes were not driven in a straight line.  For them G0 allowed any movement in space to get to the destination as fast as possible.)</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Controlled move</strong>
+          <br />
+          <code>controlled_move</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G1</pre>
+          
+            <strong>Example: </strong>
+            <pre>G1 X90.6 Y13.8 E22.4</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
+            </dl>
+          
+        </td>
+        <td>
+Go in a straight line from the current (X, Y) point to the point (90.6, 13.8), extruding material as the move happens from the current extruded length to a length of 22.4 mm.
+RepRap does subtle things with feedrates.  Thus:
+<pre>
+G1 F1500
+G1 X90.6 Y13.8 E22.4
+</pre>  
+Will set a feedrate of 1500 mm/minute, then do the move described above at that feedrate.  But
+<pre>
+G1 F1500
+G1 X90.6 Y13.8 E22.4 F3000
+</pre>
+Will set a feedrate of 1500 mm/minute, then do the move described above accelerating to a feedrate of 3000 mm/minute as it does so.  The extrusion will accelerate along with the X, Y movement so everything stays synchronized.
+RepRap thus treats feedrate as simply another variable (like X, Y, Z, and E) to be linearly interpolated. This gives complete control over accelerations and decelerations in a way that ensures that everything moves together and the right volume of material is extruded at all points.
+''Note: not every firmware implements this, e.g. the current [[Marlin]] will use the new feedrate from the beginning of the move and not change it.''
+The first example shows how to get a constant-speed movement.  The second how to accelerate or decelerate.  Thus
+<pre>
+G1 F1500
+G1 X90.6 Y13.8 E22.4 F3000
+G1 X80 Y20 E36 F1500
+</pre>
+Will do the first movement accelerating as before, and the second decelerating from 3000 mm/minute back to 1500 mm/minute.
+To reverse the extruder by a given amount (for example to reduce its internal pressure while it does an in-air movement so that it doesn't dribble) simply use G1 to send an E value that is less than the currently extruded length.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Move to Origin</strong>
+          <br />
+          <code>move_to_origin</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G28</pre>
+          
+            <strong>Example: </strong>
+            <pre>G28</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
+            </dl>
+          
+        </td>
+        <td>
+This causes the RepRap machine to move back to its X, Y and Z zero endstops, a process known as "homing".  It does so accelerating, so as to get there fast.  But when it arrives it backs off by 1 mm in each direction slowly, then moves back slowly to the stop.  This ensures more accurate positioning.  
+If you add coordinates, then just the axes with coordinates specified will be zeroed.  Thus 
+G28 X0 Y72.3
+will zero the X and Y axes, but not Z.  The actual coordinate values are ignored.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Detailed Z-Probe</strong>
+          <br />
+          <code>detailed_z_probe</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G29</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>probes the bed at 3 points.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Single Z Probe</strong>
+          <br />
+          <code>single_z_probe</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G30</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            </dl>
+          
+        </td>
+        <td>probes bed at current XY location.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Report Current Probe status</strong>
+          <br />
+          <code>report_current_probe_status</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G31</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
+            </dl>
+          
+        </td>
+        <td>reports whether Z probe is triggered.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Probe Z and calibrate with FPU</strong>
+          <br />
+          <code>probe_z_and_calibrate_with_fpu</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G32</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>probes the bed at 3 points and updates transformation matrix for bed leveling compensation.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Dwell</strong>
+          <br />
+          <code>dwell</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G4</pre>
+          
+            <strong>Example: </strong>
+            <pre>G4 P200</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+In this case sit still doing nothing for 200 milliseconds.  During delays the state of the machine (for example the temperatures of its extruders) will still be preserved and controlled.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Head Offset</strong>
+          <br />
+          <code>head_offset</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G10</pre>
+          
+            <strong>Example: </strong>
+            <pre>G10 P3 X17.8 Y-19.3 Z0.0 R140 S205</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
+            
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+This sets the offset for extrude head 3 (from the P3) to the X and Y values specified.  You can put a non-zero Z value in as well, but this is usually a bad idea unless the heads are loaded and unloaded by some sort of head changer.  When all the heads are in the machine at once they should all be set to the same Z height.
+Remember that any parameter that you don't specify will automatically be set to the last value for that parameter.  That usually means that you want explicitly to set Z0.0.  
+The R value is the standby temperature in <sup>o</sup>C that will be used for the tool, and the S value is its operating temperature.  If you don't want the head to be at a different temperature when not in use, set both values the same.  See the T code (select tool) below.
+The [http://www.nist.gov/customcf/get_pdf.cfm?pub_id=823374 NIST G-code standard] mentions an additional L parameter, which is ignored.
+This command is [[Talk:G-code#M104 .26 M109 Deprecation, G10 Introduction | subject to discussion]].</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set Units to Inches</strong>
+          <br />
+          <code>set_units_to_inches</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G20</pre>
+          
+            <strong>Example: </strong>
+            <pre>G20</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+Units from now on are in inches.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set Units to Millimeters</strong>
+          <br />
+          <code>set_units_to_millimeters</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G21</pre>
+          
+            <strong>Example: </strong>
+            <pre>G21</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            </dl>
+          
+        </td>
+        <td>
+Units from now on are in millimeters.  (This is the RepRap default.)</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set to Absolute Positioning</strong>
+          <br />
+          <code>set_to_absolute_positioning</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G90</pre>
+          
+            <strong>Example: </strong>
+            <pre>G90</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            </dl>
+          
+        </td>
+        <td>
+All coordinates from now on are absolute relative to the origin of the machine.  (This is the RepRap default.)</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set to Relative Positioning</strong>
+          <br />
+          <code>set_to_relative_positioning</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G91</pre>
+          
+            <strong>Example: </strong>
+            <pre>G91</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+All coordinates from now on are relative to the last position.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set Position</strong>
+          <br />
+          <code>set_position</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>G92</pre>
+          
+            <strong>Example: </strong>
+            <pre>G92 X10 E90</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            </dl>
+          
+        </td>
+        <td>
+Allows programming of absolute zero point, by reseting the current position to the values specified.  This would set the machine's X coordinate to 10, and the extrude coordinate to 90. No physical motion will occur.
+A G92 without coordinates will reset all axes to zero.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Stop</strong>
+          <br />
+          <code>stop</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M0</pre>
+          
+            <strong>Example: </strong>
+            <pre>M0</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+The RepRap machine finishes any moves left in its buffer, then shuts down.  All motors and heaters are turned off.  It can be started again by pressing the reset button on the master microcontroller.  See also M1, M112.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Sleep</strong>
+          <br />
+          <code>sleep</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M1</pre>
+          
+            <strong>Example: </strong>
+            <pre>M1</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+The RepRap machine finishes any moves left in its buffer, then shuts down.  All motors and heaters are turned off.  It can still be sent G and M codes, the first of which will wake it up again.  See also M0, M112.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Spindle On, Clockwise  (CNC specific)</strong>
+          <br />
+          <code>spindle_on_clockwise</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M3</pre>
+          
+            <strong>Example: </strong>
+            <pre>M3 S4000</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            </dl>
+          
+        </td>
+        <td>
+The spindle is turned on with a speed of 4000 RPM.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Spindle On, Counter-Clockwise (CNC specific)</strong>
+          <br />
+          <code>spindle_on_counter_clockwise</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M4</pre>
+          
+            <strong>Example: </strong>
+            <pre>M4 S4000</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            </dl>
+          
+        </td>
+        <td>
+The spindle is turned on with a speed of 4000 RPM.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Spindle Off (CNC specific)</strong>
+          <br />
+          <code>spindle_off</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M5</pre>
+          
+            <strong>Example: </strong>
+            <pre>M5</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+The spindle is turned off.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Mist Coolant On (CNC specific)</strong>
+          <br />
+          <code>mist_coolant_on</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M7</pre>
+          
+            <strong>Example: </strong>
+            <pre>M7</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+Mist coolant is turned on (if available)</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Flood Coolant On (CNC specific)</strong>
+          <br />
+          <code>flood_coolant_on</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M8</pre>
+          
+            <strong>Example: </strong>
+            <pre>M8</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            </dl>
+          
+        </td>
+        <td>
+Flood coolant is turned on (if available)</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Coolant Off (CNC specific)</strong>
+          <br />
+          <code>coolant_off</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M9</pre>
+          
+            <strong>Example: </strong>
+            <pre>M9</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+All coolant systems are turned off.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Vacuum On (CNC specific)</strong>
+          <br />
+          <code>vacuum_on</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M10</pre>
+          
+            <strong>Example: </strong>
+            <pre>M10</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+Dust collection vacuum system turned on.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Vacuum Off (CNC specific)</strong>
+          <br />
+          <code>vacuum_off</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M11</pre>
+          
+            <strong>Example: </strong>
+            <pre>M11</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+Dust collection vacuum system turned off.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Enable/Power all stepper motors</strong>
+          <br />
+          <code>enable_power_all_stepper_motors</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M17</pre>
+          
+            <strong>Example: </strong>
+            <pre>M17</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Disable all stepper motors</strong>
+          <br />
+          <code>disable_all_stepper_motors</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M18</pre>
+          
+            <strong>Example: </strong>
+            <pre>M18</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Disables stepper motors and allows axis to move 'freely.'
+- Is this not the same as [[#M84:_Stop_idle_hold|M84]]? --  [[User:MrAlvin|MrAlvin]] 05:53, 20 September 2012 (UTC)</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>List SD card</strong>
+          <br />
+          <code>list_sd_card</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M20</pre>
+          
+            <strong>Example: </strong>
+            <pre>M20</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            </dl>
+          
+        </td>
+        <td>
+All files in the root folder of the SD card are listed to the serial port.  This results in a line like:
+ok Files: {SQUARE.G,SQCOM.G,}
+The trailing comma is optional.  Note that file names are returned in upper case, but - when sent to the M23 command (below) they must be in lower case.  This seems to be a function of the SD software.  Go figure...</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Initialize SD card</strong>
+          <br />
+          <code>initialize_sd_card</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M21</pre>
+          
+            <strong>Example: </strong>
+            <pre>M21</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+The SD card is initialized. If an SD card is loaded when the machine is switched on, this will happen by default. SD card must be initialized for the other SD functions to work.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Release SD card</strong>
+          <br />
+          <code>release_sd_card</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M22</pre>
+          
+            <strong>Example: </strong>
+            <pre>M22</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+SD card is released and can be physically removed.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Select SD file</strong>
+          <br />
+          <code>select_sd_file</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M23</pre>
+          
+            <strong>Example: </strong>
+            <pre>M23 filename.gco</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+The file specified as filename.gco (8.3 naming convention is supported) is selected ready for printing.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Start/resume SD print</strong>
+          <br />
+          <code>start_resume_sd_print</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M24</pre>
+          
+            <strong>Example: </strong>
+            <pre>M24</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+The machine prints from the file selected with the M23 command.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Pause SD print</strong>
+          <br />
+          <code>pause_sd_print</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M25</pre>
+          
+            <strong>Example: </strong>
+            <pre>M25</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+The machine pause printing at the current position within the file selected with the M23 command.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set SD position</strong>
+          <br />
+          <code>set_sd_position</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M26</pre>
+          
+            <strong>Example: </strong>
+            <pre>M26</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Set SD position in bytes (M26 S12345).</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Report SD print status</strong>
+          <br />
+          <code>report_sd_print_status</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M27</pre>
+          
+            <strong>Example: </strong>
+            <pre>M27</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Report SD print status.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Begin write to SD card</strong>
+          <br />
+          <code>begin_write_to_sd_card</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M28</pre>
+          
+            <strong>Example: </strong>
+            <pre>M28 filename.gco</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+File specified by filename.gco is created (or overwritten if it exists) on the SD card and all subsequent commands sent to the machine are written to that file.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Stop writing to SD card</strong>
+          <br />
+          <code>stop_writing_to_sd_card</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M29</pre>
+          
+            <strong>Example: </strong>
+            <pre>M29 filename.gco</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            </dl>
+          
+        </td>
+        <td>
+File opened by M28 command is closed, and all subsequent commands sent to the machine are executed as normal.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Eject</strong>
+          <br />
+          <code>eject</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M40</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>If your RepRap machine can eject the parts it has built off the bed, this command executes the eject cycle.  This usually involves cooling the bed and then performing a sequence of movements that remove the printed parts from it.  The X, Y and Z position of the machine at the end of this cycle are undefined (though they can be found out using the M114 command, q.v.).
+See also M240 and M241 below.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Loop</strong>
+          <br />
+          <code>loop</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M41</pre>
+          
+            <strong>Example: </strong>
+            <pre>M41</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+If the RepRap machine was building a file from its own memory such as a local SD card (as opposed to a file being transmitted to it from a host computer) this goes back to the beginning of the file and runs it again.  So, for example, if your RepRap is capable of ejecting parts from its build bed then you can set it printing in a loop and it will run and run.  Use with caution - the only things that will stop it are:
+# When you press the reset button,
+# When the build material runs out (if your RepRap is set up to detect this), and
+# When there's an error (such as a heater failure).</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Stop on material exhausted / Switch I/O pin</strong>
+          <br />
+          <code>stop_on_material_exhausted_switch_i_o_pin</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M42</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Stand by on material exhausted</strong>
+          <br />
+          <code>stand_by_on_material_exhausted</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M43</pre>
+          
+            <strong>Example: </strong>
+            <pre>M43</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
+            </dl>
+          
+        </td>
+        <td>
+If your RepRap can detect when its material runs out, this decides the behaviour when that happens.  The X and Y axes are zeroed (but not Z), and then the machine shuts all motors and heaters off except the heated bed, the temperature of which is maintained.  The machine will still respond to G and M code commands in this state.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>ATX Power On</strong>
+          <br />
+          <code>atx_power_on</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M80</pre>
+          
+            <strong>Example: </strong>
+            <pre>M80</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            </dl>
+          
+        </td>
+        <td>
+Turns on the ATX power supply from standby mode to fully operational mode. No-op on electronics without standby mode.
+'''Note''': some firmwares, like [[Teacup Firmware | Teacup]], handle power on/off automatically, so this is redundant there.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>ATX Power Off</strong>
+          <br />
+          <code>atx_power_off</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M81</pre>
+          
+            <strong>Example: </strong>
+            <pre>M81</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+Turns off the ATX power supply. Counterpart to M80.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>set extruder to absolute mode</strong>
+          <br />
+          <code>set_extruder_to_absolute_mode</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M82</pre>
+          
+            <strong>Example: </strong>
+            <pre>M82</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+makes the extruder interpret extrusion as absolute positions.
+This is the default in repetier.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>set extruder to relative mode</strong>
+          <br />
+          <code>set_extruder_to_relative_mode</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M83</pre>
+          
+            <strong>Example: </strong>
+            <pre>M83</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+makes the extruder interpret extrusion values as relative positions.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Stop idle hold</strong>
+          <br />
+          <code>stop_idle_hold</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M84</pre>
+          
+            <strong>Example: </strong>
+            <pre>M84</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Stop the idle hold on all axis and extruder. In some cases the idle hold causes annoying noises, which can be stopped by disabling the hold. Be aware that by disabling idle hold during printing, you will get quality issues. This is recommended only in between or after printjobs.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set axis_steps_per_unit</strong>
+          <br />
+          <code>set_axis_steps_per_unit</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M92</pre>
+          
+            <strong>Example: </strong>
+            <pre>M92 X<newsteps> </pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>#  Sprinter and Marlin
+Allows programming of steps per unit of axis till the electronics are reset for the specified axis. Very useful for calibration.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Get axis_hysteresis_mm</strong>
+          <br />
+          <code>get_axis_hysteresis_mm</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M98</pre>
+          
+            <strong>Example: </strong>
+            <pre>M98                       </pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            </dl>
+          
+        </td>
+        <td>
+Report the current hysteresis values in mm for all of the axis.
+Proposed for Marlin</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set axis_hysteresis_mm</strong>
+          <br />
+          <code>set_axis_hysteresis_mm</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M99</pre>
+          
+            <strong>Example: </strong>
+            <pre>M99 X<mm> Y<mm> Z<mm> E<mm>   </pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            </dl>
+          
+        </td>
+        <td>
+Allows programming of axis hysteresis. Mechanical pulleys, gears and threads can have hysteresis when they change direction. That is, a certain number of steps occur before movement occurs. You can measure how many mm are lost to hysteresis and set their values with this command. Every time an axis changes direction, these extra mm will be added to compensate for the hysteresis.
+Proposed for Marlin</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set Extruder Temperature</strong>
+          <br />
+          <code>set_extruder_temperature</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M104</pre>
+          
+            <strong>Example: </strong>
+            <pre>M104 S190</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Set the temperature of the current extruder to 190<sup>o</sup>C and return control to the host immediately (''i.e.'' before that temperature has been reached by the extruder). See also M109.
+This is deprecated because temperatures should be set using the G10 and T commands (q.v.).
+Deprecation is [[Talk:G-code#M104 .26 M109 Deprecation, G10 Introduction | subject to discussion]]. --[[User:Traumflug|Traumflug]] 11:33, 19 July 2012 (UTC)</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Get Extruder Temperature</strong>
+          <br />
+          <code>get_extruder_temperature</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M105</pre>
+          
+            <strong>Example: </strong>
+            <pre>M105</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            </dl>
+          
+        </td>
+        <td>
+Request the temperature of the current extruder and the build base in degrees Celsius.  The temperatures are returned to the host computer.  For example, the line sent to the host in response to this command looks like
+<tt>ok T:201 B:117</tt></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Fan On</strong>
+          <br />
+          <code>fan_on</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M106</pre>
+          
+            <strong>Example: </strong>
+            <pre>M106 S127</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Turn on the cooling fan at half speed.
+Mandatory parameter 'S' declares the PWM value (0-255). M106 S0 turns the fan off.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Fan Off</strong>
+          <br />
+          <code>fan_off</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M107</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>Deprecated. Use M106 S0 instead.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set Extruder Speed</strong>
+          <br />
+          <code>set_extruder_speed</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M108</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>Sets speed of extruder motor.
+(Deprecated in current firmware, see M113)</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set Extruder Temperature and Wait</strong>
+          <br />
+          <code>set_extruder_temperature_and_wait</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M109</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set Current Line Number</strong>
+          <br />
+          <code>set_current_line_number</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M110</pre>
+          
+            <strong>Example: </strong>
+            <pre>M110 N123</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Set the current line number to 123.  Thus the expected next line after this command will be 124.
+<br style="clear: both" /></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set Debug Level</strong>
+          <br />
+          <code>set_debug_level</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M111</pre>
+          
+            <strong>Example: </strong>
+            <pre>M111 S6</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            </dl>
+          
+        </td>
+        <td>
+Set the level of debugging information transmitted back to the host to level 6.  The level is the OR of three bits:
+<Pre>
+#define DEBUG_ECHO (1<<0)
+#define DEBUG_INFO (1<<1)
+#define DEBUG_ERRORS (1<<2)
+</pre>
+Thus 6 means send information and errors, but don't echo commands.  (This is the RepRap default.)
+Example: M253</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Emergency Stop</strong>
+          <br />
+          <code>emergency_stop</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M112</pre>
+          
+            <strong>Example: </strong>
+            <pre>M112</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Any moves in progress are immediately terminated, then RepRap shuts down.  All motors and heaters are turned off.  It can be started again by pressing the reset button on the master microcontroller.  See also M0 and M1.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set Extruder PWM</strong>
+          <br />
+          <code>set_extruder_pwm</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M113</pre>
+          
+            <strong>Example: </strong>
+            <pre>M113</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            </dl>
+          
+        </td>
+        <td>
+Set the PWM for the currently-selected extruder.  On its own this command 
+sets RepRap to use the on-board potentiometer on the extruder controller board to set the PWM for the currently-selected extruder's stepper power.  With an S field:
+M113 S0.7
+it causes the PWM to be set to the S value (70% in this instance).  M113 S0 turns the extruder off, until an M113 command other than M113 S0 is sent.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Get Current Position</strong>
+          <br />
+          <code>get_current_position</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M114</pre>
+          
+            <strong>Example: </strong>
+            <pre>M114</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
+            
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            </dl>
+          
+        </td>
+        <td>
+This causes the RepRap machine to report its current X, Y, Z and E coordinates to the host.
+For example, the machine returns a string such as:
+<tt>ok C: X:0.00 Y:0.00 Z:0.00 E:0.00</tt></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Get Firmware Version and Capabilities</strong>
+          <br />
+          <code>get_firmware_version_and_capabilities</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M115</pre>
+          
+            <strong>Example: </strong>
+            <pre>M115</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Request the Firmware Version and Capabilities of the current microcontroller 
+The details are returned to the host computer as key:value pairs separated by spaces and terminated with a linefeed.
+sample data from firmware:
+ok PROTOCOL_VERSION:0.1 FIRMWARE_NAME:FiveD FIRMWARE_URL:http%3A//reprap.org MACHINE_TYPE:Mendel EXTRUDER_COUNT:1
+This M115 code is inconsistently implemented, and should not be relied upon to exist, or output correctly in all cases. An initial implementation was committed to svn for the FiveD Reprap firmware on 11 Oct 2010.  Work to more formally define protocol versions is currently (October 2010) being discussed.  See [[M115_Keywords]] for one draft set of keywords and their meanings.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Wait</strong>
+          <br />
+          <code>wait</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M116</pre>
+          
+            <strong>Example: </strong>
+            <pre>M116</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Wait for ''all'' temperatures and other slowly-changing variables to arrive at their set values.  See also M109.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Get Zero Position</strong>
+          <br />
+          <code>get_zero_position</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M117</pre>
+          
+            <strong>Example: </strong>
+            <pre>M117</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
+            
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            </dl>
+          
+        </td>
+        <td>
+This causes the RepRap machine to report the X, Y, Z and E coordinates ''in steps not mm'' to the host that it found when it last hit the zero stops for those axes.  That is to say, when you zero X, the <i>x</i> coordinate of the machine when it hits the X endstop is recorded.  This value should be 0, of course.  But if the machine has drifted (for example by dropping steps) then it won't be.  This command allows you to measure and to diagnose such problems.  (E is included for completeness.  It doesn't normally have an endstop.)</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Negotiate Features</strong>
+          <br />
+          <code>negotiate_features</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M118</pre>
+          
+            <strong>Example: </strong>
+            <pre>M118 P42</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+This M-code is for future proofing. NO firmware or hostware supports this at the moment. It is used in conjunction with M115's FEATURES keyword.
+See [[Protocol_Feature_Negotiation]] for more info.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Get Endstop Status</strong>
+          <br />
+          <code>get_endstop_status</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M119</pre>
+          
+            <strong>Example: </strong>
+            <pre>M119</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Returns the current state of the configured X,Y,Z endstops. Should take into account any 'inverted endstop' settings, so one can confirm that the machine is interpreting the endstops correctly.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Open Valve</strong>
+          <br />
+          <code>open_valve</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M126</pre>
+          
+            <strong>Example: </strong>
+            <pre>M126 P500</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+Open the extruder's valve (if it has one) and wait 500 milliseconds for it to do so.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Close Valve</strong>
+          <br />
+          <code>close_valve</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M127</pre>
+          
+            <strong>Example: </strong>
+            <pre>M127 P400</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+Close the extruder's valve (if it has one) and wait 400 milliseconds for it to do so.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Extruder Pressure PWM</strong>
+          <br />
+          <code>extruder_pressure_pwm</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M128</pre>
+          
+            <strong>Example: </strong>
+            <pre>M128 S255</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+PWM value to control internal extruder pressure. S255 is full pressure.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Extruder pressure off</strong>
+          <br />
+          <code>extruder_pressure_off</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M129</pre>
+          
+            <strong>Example: </strong>
+            <pre>M129 P100</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            </dl>
+          
+        </td>
+        <td>
+In addition to setting Extruder pressure to 0, you can turn the pressure off entirely. P400 will wait 100ms to do so.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set PID P value</strong>
+          <br />
+          <code>set_pid_p_value</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M130</pre>
+          
+            <strong>Example: </strong>
+            <pre>M130 P 0 S 8.0  </pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            </dl>
+          
+        </td>
+        <td>#  Sets heater 0 P factor to 8.0
+<br style="clear: both" /></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set PID I value</strong>
+          <br />
+          <code>set_pid_i_value</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M131</pre>
+          
+            <strong>Example: </strong>
+            <pre>M130 P 1 S 0.5  </pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>#  Sets heater 1 I factor to 0.5
+<br style="clear: both" /></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set PID D value</strong>
+          <br />
+          <code>set_pid_d_value</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M132</pre>
+          
+            <strong>Example: </strong>
+            <pre>M130 P 0 S 24  </pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>#  Sets heater 0 D factor to 24.0
+<br style="clear: both" /></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set PID I limit value</strong>
+          <br />
+          <code>set_pid_i_limit_value</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M133</pre>
+          
+            <strong>Example: </strong>
+            <pre>M130 P 1 S 264  </pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>#  Sets heater 0 I limit value to 264
+<br style="clear: both" /></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Write PID values to EEPROM</strong>
+          <br />
+          <code>write_pid_values_to_eeprom</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M134</pre>
+          
+            <strong>Example: </strong>
+            <pre>M134 </pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+<br style="clear: both" /></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Print PID settings to host</strong>
+          <br />
+          <code>print_pid_settings_to_host</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M136</pre>
+          
+            <strong>Example: </strong>
+            <pre>M136 P1  </pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            </dl>
+          
+        </td>
+        <td># print heater 0 PID parameters to host
+<br style="clear: both" /></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Bed Temperature (Fast)</strong>
+          <br />
+          <code>bed_temperature</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M140</pre>
+          
+            <strong>Example: </strong>
+            <pre>M140 S55</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Set the temperature of the build bed to 55<sup>o</sup>C and return control to the host immediately (''i.e.'' before that temperature has been reached by the bed).</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Chamber Temperature (Fast)</strong>
+          <br />
+          <code>chamber_temperature</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M141</pre>
+          
+            <strong>Example: </strong>
+            <pre>M141 S30</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Set the temperature of the chamber to 30<sup>o</sup>C and return control to the host immediately (''i.e.'' before that temperature has been reached by the chamber).</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Holding Pressure</strong>
+          <br />
+          <code>holding_pressure</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M142</pre>
+          
+            <strong>Example: </strong>
+            <pre>M142 S1</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            </dl>
+          
+        </td>
+        <td>
+Set the holding pressure of the bed to 1 bar.
+The holding pressure is in bar.  For hardware which only has on/off holding, when the holding pressure is zero, turn off holding, when the holding pressure is greater than zero, turn on holding.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Maximum hot-end temperature</strong>
+          <br />
+          <code>maximum_hot_end_temperature</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M143</pre>
+          
+            <strong>Example: </strong>
+            <pre>M143 S275</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+Set the maximum temperature of the hot-end to 275C
+When temperature of the hot-end exceeds this value, take countermeasures, for instance an emergency stop. This is to prevent hot-end damage.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Number of mixed materials</strong>
+          <br />
+          <code>number_of_mixed_materials</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M160</pre>
+          
+            <strong>Example: </strong>
+            <pre>M160 S4</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            </dl>
+          
+        </td>
+        <td>
+Set the number of materials, N, that the current extruder can handle to the number specified.  The default is 1.
+When N >= 2, then the E field that controls extrusion requires N+1 values separated by spaces after it like this: 
+<pre>
+M160 S4
+G1 X90.6 Y13.8 E22.4 0.1 0.1 0.1 0.7
+G1 X70.6 E42.4 0.0 0.0 0.0 1.0
+G1 E42.4 1.0 0.0 0.0 0.0
+</pre>
+The second line moves straight to the point (90.6, 13.8) extruding 22.4mm of filament.  The mix ratio at the '''end''' of the move is 0.1:0.1:0.1:0.7.
+The third line moves back 20mm in X extruding 20mm of filament.  The mix varies linearly from 0.1:0.1:0.1:0.7 to 0:0:0:1 as the move is made.
+The fourth line has no physical effect, but sets the mix proportions for the start of the next move to 1:0:0:0.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Wait for bed temperature to reach target temp</strong>
+          <br />
+          <code>wait_for_bed_temperature_to_reach_target_temp</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M190</pre>
+          
+            <strong>Example: </strong>
+            <pre>M190 S60</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+This will wait until the bed temperature reaches 60 degrees, printing out the temperature of the hot end and the bed every second.
+<br style="clear: both" /></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>set home offset</strong>
+          <br />
+          <code>set_home_offset</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M206</pre>
+          
+            <strong>Example: </strong>
+            <pre>M206 X10.0 Y10.0 Z-0.4</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            </dl>
+          
+        </td>
+        <td>
+The values specified are added to the endstop position when the axes are referenced. The same can be achieved with a G92 right after homing (G28, G161).
+With Marlin firmware, this value can be saved to EEPROM using the M500 command.
+A similar command is G10, aligning these two is [[Talk:G-code#M104 .26 M109 Deprecation, G10 Introduction | subject to discussion]].</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>calibrate z axis by detecting z max length</strong>
+          <br />
+          <code>calibrate_z_axis_by_detecting_z_max_length</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M207</pre>
+          
+            <strong>Example: </strong>
+            <pre>M207</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
+            
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            
+              <dt>F</dt>
+              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
+            </dl>
+          
+        </td>
+        <td>
+After placing the tip of the nozzle in the position you expect to be considered Z=0, issue this command to calibrate the Z axis. It will perform a z axis homing routine and calculate the distance traveled in this process. The result is stored in EEPROM as z_max_length. For using this calibration method the machine must be using a Z MAX endstop.
+This procedure is usually more reliable than mechanical adjustments of a Z MIN endstop.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>set axis max travel</strong>
+          <br />
+          <code>set_axis_max_travel</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M208</pre>
+          
+            <strong>Example: </strong>
+            <pre>M208 X250 Y210 Z180</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            </dl>
+          
+        </td>
+        <td>
+The values specified set the software limits for axis travel in the positive direction.
+With Marlin firmware, this value can be saved to EEPROM using the M500 command.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>enable automatic retract</strong>
+          <br />
+          <code>enable_automatic_retract</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M209</pre>
+          
+            <strong>Example: </strong>
+            <pre>M209 S1</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+This boolean value S 1=true or 0=false enables automatic retract detect if the slicer did not support G10/11: every normal extrude-only move will be classified as retract depending on the direction.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>set speed factor override percentage</strong>
+          <br />
+          <code>set_speed_factor_override_percentage</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M220</pre>
+          
+            <strong>Example: </strong>
+            <pre>M220 S80</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+S<factor in percent>- set speed factor override percentage</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>set extrude factor override percentage</strong>
+          <br />
+          <code>set_extrude_factor_override_percentage</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M221</pre>
+          
+            <strong>Example: </strong>
+            <pre>M221 S70</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+S<factor in percent>- set extrude factor override percentage</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Gcode Initiated Pause</strong>
+          <br />
+          <code>gcode_initiated_pause</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M226</pre>
+          
+            <strong>Example: </strong>
+            <pre>M226</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            </dl>
+          
+        </td>
+        <td>
+Initiates a pause in the same way as if the pause button is pressed. That is, program execution is stopped and the printer waits for user interaction. This matches the behaviour of M1 in the [http://www.nist.gov/manuscript-publication-search.cfm?pub_id=823374 NIST RS274NGC G-code standard] and M0 in Marlin firmware.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Enable Automatic Reverse and Prime</strong>
+          <br />
+          <code>enable_automatic_reverse_and_prime</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M229</pre>
+          
+            <strong>Example: </strong>
+            <pre>M229 P1.0 S1.0</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+P and S are extruder screw rotations. See also M227.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Disable Automatic Reverse and Prime</strong>
+          <br />
+          <code>disable_automatic_reverse_and_prime</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M228</pre>
+          
+            <strong>Example: </strong>
+            <pre>M228</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>
+See also M227.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Disable / Enable Wait for Temperature Change</strong>
+          <br />
+          <code>disable_enable_wait_for_temperature_change</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M230</pre>
+          
+            <strong>Example: </strong>
+            <pre>M230 S1</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            </dl>
+          
+        </td>
+        <td>
+S1 Disable wait for temperature change
+S0 Enable wait for temperature change</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Start conveyor belt motor / Echo off</strong>
+          <br />
+          <code>start_conveyor_belt_motor_echo_off</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M240</pre>
+          
+            <strong>Example: </strong>
+            <pre>M240</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            </dl>
+          
+        </td>
+        <td>
+The conveyor belt allows to start mass production of a part with a reprap.  
+Echoing may be controlled in some firmwares with M111
+<br style="clear: both" /></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Stop conveyor belt motor / echo on</strong>
+          <br />
+          <code>stop_conveyor_belt_motor_echo_on</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M241</pre>
+          
+            <strong>Example: </strong>
+            <pre>M241</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            </dl>
+          
+        </td>
+        <td>
+Echoing may be controlled in some firmwares with M111
+<br style="clear: both" /></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Start cooler</strong>
+          <br />
+          <code>start_cooler</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M245</pre>
+          
+            <strong>Example: </strong>
+            <pre>M245</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td>
+used to cool parts/heated-bed down after printing for easy remove of the parts after print</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Stop cooler</strong>
+          <br />
+          <code>stop_cooler</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M246</pre>
+          
+            <strong>Example: </strong>
+            <pre>M246</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            &nbsp;
+          
+        </td>
+        <td></td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Play beep sound</strong>
+          <br />
+          <code>play_beep_sound</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M300</pre>
+          
+            <strong>Example: </strong>
+            <pre>M300 S300 P1000</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            </dl>
+          
+        </td>
+        <td>Usage: M300 S<frequency Hz> P<duration ms>
+
+Play beep sound, use to notify important events like the end of printing. [http://www.3dprinting-r2c2.com/?q=content/seasons-greetings See working example on] [[R2C2_RepRap_Electronics|R2C2 electronics]].</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set PID parameters - Hot End</strong>
+          <br />
+          <code>set_pid_parameters_hot_end</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M301</pre>
+          
+            <strong>Example: </strong>
+            <pre>M301 P1 I2 D3 C5</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            </dl>
+          
+        </td>
+        <td>
+Sets Proportional, Integral and Derivative values for hot end, the value C refers to an extrusion rate.
+Alternate implementation
+Example: M301 W125</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set PID parameters - Bed</strong>
+          <br />
+          <code>set_pid_parameters_bed</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M304</pre>
+          
+            <strong>Example: </strong>
+            <pre>M304 P1 I2 D3</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            </dl>
+          
+        </td>
+        <td>
+Sets Proportional, Integral and Derivative values for bed</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Set RGB Colors as PWM</strong>
+          <br />
+          <code>set_rgb_colors_as_pwm</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>M420</pre>
+          
+            <strong>Example: </strong>
+            <pre>M420 R255 E255 B255</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
+          
+        </td>
+        <td>Usage: M420 R<Red PWM (0-255)> E<Green PWM (0-255)> B<Blue PWM (0-255)>
+
+Set the color of your RGB LEDs that are connected to PWM-enabled pins.  Note, the Green color is controlled by the E value instead of the G value due to the G code being a primary code that cannot be overridden.</td>
+      </tr>
+    
+      <tr>
+        <td>
+          <strong>Select Tool</strong>
+          <br />
+          <code>select_tool</code>
+        </td>
+        <td>
+          <strong>Code:</strong>
+          <pre>T</pre>
+          
+            <strong>Example: </strong>
+            <pre>T1</pre>
+          
+        </td>
+        <td class="no-padding">
+          
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
+            
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            </dl>
+          
+        </td>
+        <td>
+Select extruder number 1 to build with.  
+The sequence followed is:
+# Set the current extruder to its standby temperature specified by G10 (see above),
+# Set the new extruder to its operating temperature specified by G10 and wait for '''all''' temperatures to stabilise,
+# Apply any X, Y, Z offset for the new extruder specified by G10,
+# Use the new extruder.
+Selecting a non-existent tool (100, say) just does Step 1. above.  That is to say it leaves all tools in their standby state.  You can, of course, use the G10 command beforehand to set that standby temperature to anything you like.
+Note that you may wish to move to a parking position ''before'' executing a T command  in order to allow the new extruder to reach temperature while not in contact with the print.  It is acceptable for the firmware to apply a small offset (by convention -1mm in Y) to the current position when the above sequence is entered to allow temperature changes to take effect just away from the parking position.  Any such offset must, of course, be undone when the procedure finishes.
+If the Z value changes in the offsets and the head moves up, then the Z move is made before the X and Y moves.  If Z moves down, X and Y are done first.
+After a reset extruders will not start heating until they are selected.  You can either put them all at their standby temperature by selecting them in turn, or leave them off so they only come on if/when you first use them.  The M0, M1 and M112 commands turn them all off.  You can, of course, turn them all off with the M1 command, then turn some back on again.  Don't forget also to turn on the heated bed (if any) if you use that trick.
+Extruder numbering starts at 0.</td>
+      </tr>
+    
+  </tbody>
+</table>

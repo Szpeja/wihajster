@@ -351,7 +351,7 @@ Stop the idle hold on all axis and extruder. In some cases the idle hold causes 
 
 ==== M92: Set axis_steps_per_unit ====
 
-Example: M92 X<newsteps>   Sprinter and Marlin
+Example: M92 X<newsteps> #  Sprinter and Marlin
 
 Allows programming of steps per unit of axis till the electronics are reset for the specified axis. Very useful for calibration.
 
