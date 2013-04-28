@@ -1,8 +1,7 @@
 require 'thread'
 require 'monitor'
 
-class Wihajster::Printer
-  include MonitorMixin
+class Wihajster::Printer < Monitor
   include Wihajster
 
   attr_reader :device, :speed, :sp
@@ -12,6 +11,8 @@ class Wihajster::Printer
   end
 
   def initialize(dev, opt={})
+    super() # Create monitor mutex
+
     @device     = dev
     @speed      = opt[:speed] || 115200
     @model      = opt[:model] || :reprap
@@ -101,6 +102,7 @@ class Wihajster::Printer
     @lines.clear
     @send_queue.clear
     @line_nr = 0
+    @can_send = 1
 
     send_gcode('M101')
   end
@@ -134,7 +136,7 @@ class Wihajster::Printer
     checksum = line.each_byte.inject(0){|c, b| c ^= b }
     line = "#{line}*#{checksum}\n" #add checksum
     
-    synchronize do
+    self.synchronize do
       if can_write?
         send_to_printer(line)
       else
@@ -149,6 +151,9 @@ class Wihajster::Printer
   def readline
     @sp.readline.strip
   rescue EOFError
+    nil
+  rescue IOError # Stream was closed during readline call
+    disconnect
     nil
   end
 
@@ -204,7 +209,7 @@ class Wihajster::Printer
 
   # Sends as many commands as possible to machine.
   def send_commands_from_queue
-    synchronize do
+    self.synchronize do
       return unless can_write?
 
       while @can_send > 0 && @send_queue.length > 0
@@ -215,7 +220,7 @@ class Wihajster::Printer
 
   # Sends single line to printer.
   def send_to_printer(line_to_send)
-    synchronize do
+    self.synchronize do
       ui.log :sending, line_to_send
 
       @can_send -= 1

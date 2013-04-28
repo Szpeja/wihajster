@@ -6,13 +6,12 @@ module JoystickEvents
   # Called each time module is loaded.
   def self.extended(base)
     Wihajster.ui.log :script, :extended, "Joystick events loaded. Check if ANALOG is ON :)"
-    base.set_variables
+    base.set_joystick_variables
   end
 
-  def set_variables
+  def set_joystick_variables
     @extruder = 5
     @axis = 10
-    @feed_rate = 1000 # mm/s
   end
     
   # Called ONCE when joystick button is pressed.
@@ -43,7 +42,7 @@ module JoystickEvents
     when 8 # Button select
     
     when 9 # Button start
-      move_to_origin
+      move_home
 
     when 10 # Button Lewy Wcisk
     

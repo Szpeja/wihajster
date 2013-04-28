@@ -49,7 +49,7 @@ module Wihajster::Initializers
   def initialize_printer(device=nil, speed=115200)
     device ||= ui.choose("Choose printer:", ::Wihajster::Printer.devices)
 
-    Wihajster.printer = @printer = device && ::Wihajster::Printer.new(device, speed)
+    Wihajster.printer = @printer = device && ::Wihajster::Printer.new(device, speed: speed)
 
     if @printer
       ui.log :initializer, :printer, "Initialized printer on: #{device}"

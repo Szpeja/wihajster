@@ -107,6 +107,7 @@ def start(app)
       app.send(method, *ARGV[1..-1])
     rescue ArgumentError => e
       $stderr.puts "Could not call action #{method} - #{e}"
+      $stderr.puts "#{e.class.name} #{e}\n  #{e.backtrace.join("\n  ")}"
       exit 2
     rescue => e
       $stderr.puts "Failed to load Wihajster"
