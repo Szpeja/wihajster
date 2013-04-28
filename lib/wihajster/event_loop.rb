@@ -79,11 +79,18 @@ class Wihajster::EventLoop
         joystick_button_held(event, tick_event.milliseconds)
       end
     end
+
+    # Writes command to printer if active
+    def write_command(command)
+      super
+      printer && printer.send_gcode(command)
+    end
   end
 
   class Runner
     include DefaultHandlers
     include Wihajster
+    include Wihajster::GCode::Commands
 
     def initialize(event_loop)
       @running = false
@@ -99,7 +106,7 @@ class Wihajster::EventLoop
     #
     # On each event the #process_event method is called.
     # That method should be overriden to handle events.
-    def run
+    def __run_event_loop
       @running = true
 
       while true
@@ -124,15 +131,15 @@ class Wihajster::EventLoop
       @running = false
     end
 
-    def running?
+    def __running?
       @running && !@stop
     end
 
-    def stop
+    def __stop_event_loop
       @stop = true
     end
 
-    def extended_modules
+    def __extended_modules
       (class << self; self end).included_modules
     end
   end
@@ -156,11 +163,11 @@ class Wihajster::EventLoop
   end
 
   def running?
-    @keep_running && @runner && @runner.running?
+    @keep_running && @runner && @runner.__running?
   end
 
   def handlers
-    runner.extended_modules - Runner.ancestors
+    runner.__extended_modules - Runner.ancestors
   end
 
   def runner
@@ -240,7 +247,7 @@ class Wihajster::EventLoop
 
     @runner_thread = Thread.new do
       while @keep_running
-        runner.run
+        runner.__run_event_loop
       end
     end
     @runner_thread.join unless non_block
@@ -256,7 +263,7 @@ class Wihajster::EventLoop
       @previous_runner = runner
       @runner = Runner.new(self)
       on_load.call if on_load
-      @previous_runner.stop
+      @previous_runner.__stop_event_loop
     end
 
     self
@@ -266,7 +273,7 @@ class Wihajster::EventLoop
     ui.log :event_loop, :stopping, "Stopping event loop"
 
     @keep_running = false
-    runner.stop
+    runner.__stop_event_looop
     @runner_thread.join
   end
 

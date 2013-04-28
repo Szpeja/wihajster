@@ -24,7 +24,7 @@ class WihajsterApp
 
     event_loop.run!(:non_block)
 
-    pry Console.new
+    pry event_loop.runner
   end
 
   def run(profile="")
@@ -72,6 +72,14 @@ class WihajsterApp
     event_loop.reload! # Clean event loop
     Thread.new{ sleep 0.3; event_loop.stop }
     event_loop.run!
+  end
+
+  def generate
+    # Use thor to generate - allows overriding etc.
+    FileUtils.mkdir_p "log"
+    Dir.glob(File.join(Wihajster.root, "examples", "*")) do |example|
+      FileUtils.cp example , Dir.pwd
+    end
   end
 
   protected

@@ -21,7 +21,7 @@ module JoystickEvents
 
     case event.button
     when 0 # Button 1
-    
+      rectangle
     when 1 # Button 2
     
     when 2 # Button 3

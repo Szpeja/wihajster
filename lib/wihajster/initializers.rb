@@ -67,8 +67,12 @@ module Wihajster::Initializers
 
   def silence_stream(stream)
     old_stream = stream.dup
-    FileUtils.mkdir_p("log")
-    stream.reopen('log/sdl_error.log')
+    if Dir.exist?("log")
+      file = File.join("log", "wihajster_sdl_errors.log")
+    else
+      file = RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ ? 'NUL:' : '/dev/null'
+    end
+    stream.reopen(file)
     stream.sync = true
 
     yield
