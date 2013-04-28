@@ -10,7 +10,7 @@ guard :shell do
   end
 
   watch(/doc\/.+/) do
-    `rake yaml`
+    `rake yard`
   end
 
   watch(%r{lib/.+\.rb}) do |m|

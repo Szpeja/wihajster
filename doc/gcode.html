@@ -55,12 +55,6 @@
             <dl class="compact">
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
-            
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
-              <dt>F</dt>
-              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
             </dl>
           
         </td>
@@ -85,11 +79,8 @@ In this case move rapidly to X = 12 mm.  In fact, the RepRap firmware uses exact
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>Y</dt>
-              <dd>A Y coordinate, usually to move to</dd>
-            
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
             
               <dt>F</dt>
               <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
@@ -97,8 +88,8 @@ In this case move rapidly to X = 12 mm.  In fact, the RepRap firmware uses exact
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
             
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
             
               <dt>Z</dt>
               <dd>A Z coordinate, usually to move to</dd>
@@ -147,9 +138,6 @@ To reverse the extruder by a given amount (for example to reduce its internal pr
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
             
@@ -200,10 +188,7 @@ will zero the X and Y axes, but not Z.  The actual coordinate values are ignored
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>X</dt>
-              <dd>A X coordinate, usually to move to</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>probes bed at current XY location.</td>
@@ -266,7 +251,10 @@ will zero the X and Y axes, but not Z.  The actual coordinate values are ignored
         </td>
         <td class="no-padding">
           
-            &nbsp;
+            <dl class="compact">
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            </dl>
           
         </td>
         <td>
@@ -293,6 +281,12 @@ In this case sit still doing nothing for 200 milliseconds.  During delays the st
               <dt>P</dt>
               <dd>Time  parameter, such as a time in millimetersseconds</dd>
             
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
             
@@ -301,12 +295,6 @@ In this case sit still doing nothing for 200 milliseconds.  During delays the st
             
               <dt>Z</dt>
               <dd>A Z coordinate, usually to move to</dd>
-            
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
             </dl>
           
         </td>
@@ -357,10 +345,7 @@ Units from now on are in inches.</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -383,10 +368,7 @@ Units from now on are in millimeters.  (This is the RepRap default.)</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -433,6 +415,9 @@ All coordinates from now on are relative to the last position.</td>
         <td class="no-padding">
           
             <dl class="compact">
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
             </dl>
@@ -459,13 +444,7 @@ A G92 without coordinates will reset all axes to zero.</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -488,13 +467,7 @@ The RepRap machine finishes any moves left in its buffer, then shuts down.  All 
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -518,8 +491,8 @@ The RepRap machine finishes any moves left in its buffer, then shuts down.  All 
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
             </dl>
           
         </td>
@@ -544,8 +517,8 @@ The spindle is turned on with a speed of 4000 RPM.</td>
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
             </dl>
           
         </td>
@@ -615,10 +588,7 @@ Mist coolant is turned on (if available)</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>F</dt>
-              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -732,10 +702,7 @@ Dust collection vacuum system turned off.</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -759,13 +726,7 @@ Disables stepper motors and allows axis to move 'freely.'
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            
-              <dt>F</dt>
-              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -790,10 +751,7 @@ The trailing comma is optional.  Note that file names are returned in upper case
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -816,10 +774,7 @@ The SD card is initialized. If an SD card is loaded when the machine is switched
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -937,13 +892,7 @@ Set SD position in bytes (M26 S12345).</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -966,13 +915,7 @@ Report SD print status.</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>F</dt>
-              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
-            
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -995,10 +938,7 @@ File specified by filename.gco is created (or overwritten if it exists) on the S
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>F</dt>
-              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -1019,9 +959,6 @@ File opened by M28 command is closed, and all subsequent commands sent to the ma
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
             
@@ -1030,9 +967,6 @@ File opened by M28 command is closed, and all subsequent commands sent to the ma
             
               <dt>Z</dt>
               <dd>A Z coordinate, usually to move to</dd>
-            
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
             </dl>
           
         </td>
@@ -1056,13 +990,7 @@ See also M240 and M241 below.</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -1108,9 +1036,6 @@ If the RepRap machine was building a file from its own memory such as a local SD
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
             
@@ -1142,10 +1067,7 @@ If your RepRap can detect when its material runs out, this decides the behaviour
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>F</dt>
-              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -1239,10 +1161,7 @@ makes the extruder interpret extrusion values as relative positions.</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -1266,8 +1185,8 @@ Stop the idle hold on all axis and extruder. In some cases the idle hold causes 
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
             </dl>
           
         </td>
@@ -1291,13 +1210,7 @@ Allows programming of steps per unit of axis till the electronics are reset for 
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
-              <dt>P</dt>
-              <dd>Time  parameter, such as a time in millimetersseconds</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -1322,14 +1235,17 @@ Proposed for Marlin</td>
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>Y</dt>
-              <dd>A Y coordinate, usually to move to</dd>
-            
               <dt>E</dt>
               <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
             
-              <dt>P</dt>
-              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
             </dl>
           
         </td>
@@ -1382,13 +1298,7 @@ Deprecation is [[Talk:G-code#M104 .26 M109 Deprecation, G10 Introduction | subje
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
-              <dt>F</dt>
-              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -1413,9 +1323,6 @@ Request the temperature of the current extruder and the build base in degrees Ce
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>P</dt>
-              <dd>Time  parameter, such as a time in millimetersseconds</dd>
-            
               <dt>S</dt>
               <dd>Power parameter, such as the voltage to send to a motor</dd>
             </dl>
@@ -1503,10 +1410,7 @@ Mandatory parameter 'S' declares the PWM value (0-255). M106 S0 turns the fan of
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -1533,12 +1437,6 @@ Set the current line number to 123.  Thus the expected next line after this comm
             <dl class="compact">
               <dt>S</dt>
               <dd>Power parameter, such as the voltage to send to a motor</dd>
-            
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
             </dl>
           
         </td>
@@ -1569,13 +1467,7 @@ Example: M253</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -1601,12 +1493,6 @@ Any moves in progress are immediately terminated, then RepRap shuts down.  All m
             <dl class="compact">
               <dt>S</dt>
               <dd>Power parameter, such as the voltage to send to a motor</dd>
-            
-              <dt>P</dt>
-              <dd>Time  parameter, such as a time in millimetersseconds</dd>
-            
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
             </dl>
           
         </td>
@@ -1634,8 +1520,8 @@ it causes the PWM to be set to the S value (70% in this instance).  M113 S0 turn
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
             
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
@@ -1645,12 +1531,6 @@ it causes the PWM to be set to the S value (70% in this instance).  M113 S0 turn
             
               <dt>Z</dt>
               <dd>A Z coordinate, usually to move to</dd>
-            
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
-            
-              <dt>F</dt>
-              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
             </dl>
           
         </td>
@@ -1676,22 +1556,7 @@ For example, the machine returns a string such as:
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
-              <dt>F</dt>
-              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
-            
-              <dt>P</dt>
-              <dd>Time  parameter, such as a time in millimetersseconds</dd>
-            
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
-            
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -1718,10 +1583,7 @@ This M115 code is inconsistently implemented, and should not be relied upon to e
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -1745,8 +1607,8 @@ Wait for ''all'' temperatures and other slowly-changing variables to arrive at t
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
+              <dt>E</dt>
+              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
             
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
@@ -1756,9 +1618,6 @@ Wait for ''all'' temperatures and other slowly-changing variables to arrive at t
             
               <dt>Z</dt>
               <dd>A Z coordinate, usually to move to</dd>
-            
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
             </dl>
           
         </td>
@@ -1783,11 +1642,8 @@ This causes the RepRap machine to report the X, Y, Z and E coordinates ''in step
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>F</dt>
-              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
-            
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
             </dl>
           
         </td>
@@ -1813,14 +1669,8 @@ See [[Protocol_Feature_Negotiation]] for more info.</td>
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
-            
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
             </dl>
           
         </td>
@@ -1844,7 +1694,10 @@ Returns the current state of the configured X,Y,Z endstops. Should take into acc
         </td>
         <td class="no-padding">
           
-            &nbsp;
+            <dl class="compact">
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            </dl>
           
         </td>
         <td>
@@ -1867,7 +1720,10 @@ Open the extruder's valve (if it has one) and wait 500 milliseconds for it to do
         </td>
         <td class="no-padding">
           
-            &nbsp;
+            <dl class="compact">
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            </dl>
           
         </td>
         <td>
@@ -1891,9 +1747,6 @@ Close the extruder's valve (if it has one) and wait 400 milliseconds for it to d
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>P</dt>
-              <dd>Time  parameter, such as a time in millimetersseconds</dd>
-            
               <dt>S</dt>
               <dd>Power parameter, such as the voltage to send to a motor</dd>
             </dl>
@@ -1920,9 +1773,6 @@ PWM value to control internal extruder pressure. S255 is full pressure.</td>
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
-            
               <dt>P</dt>
               <dd>Time  parameter, such as a time in millimetersseconds</dd>
             </dl>
@@ -1949,11 +1799,11 @@ In addition to setting Extruder pressure to 0, you can turn the pressure off ent
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            
               <dt>P</dt>
               <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
             </dl>
           
         </td>
@@ -1978,6 +1828,9 @@ In addition to setting Extruder pressure to 0, you can turn the pressure off ent
         <td class="no-padding">
           
             <dl class="compact">
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
               <dt>S</dt>
               <dd>Power parameter, such as the voltage to send to a motor</dd>
             </dl>
@@ -2004,6 +1857,9 @@ In addition to setting Extruder pressure to 0, you can turn the pressure off ent
         <td class="no-padding">
           
             <dl class="compact">
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
               <dt>S</dt>
               <dd>Power parameter, such as the voltage to send to a motor</dd>
             </dl>
@@ -2030,6 +1886,9 @@ In addition to setting Extruder pressure to 0, you can turn the pressure off ent
         <td class="no-padding">
           
             <dl class="compact">
+              <dt>P</dt>
+              <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
               <dt>S</dt>
               <dd>Power parameter, such as the voltage to send to a motor</dd>
             </dl>
@@ -2159,9 +2018,6 @@ Set the temperature of the chamber to 30<sup>o</sup>C and return control to the 
             <dl class="compact">
               <dt>S</dt>
               <dd>Power parameter, such as the voltage to send to a motor</dd>
-            
-              <dt>F</dt>
-              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
             </dl>
           
         </td>
@@ -2214,11 +2070,11 @@ When temperature of the hot-end exceeds this value, take countermeasures, for in
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            
               <dt>E</dt>
               <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
             
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
@@ -2258,7 +2114,10 @@ The fourth line has no physical effect, but sets the mix proportions for the sta
         </td>
         <td class="no-padding">
           
-            &nbsp;
+            <dl class="compact">
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
+            </dl>
           
         </td>
         <td>
@@ -2283,8 +2142,14 @@ This will wait until the bed temperature reaches 60 degrees, printing out the te
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
             </dl>
           
         </td>
@@ -2313,12 +2178,6 @@ A similar command is G10, aligning these two is [[Talk:G-code#M104 .26 M109 Depr
             <dl class="compact">
               <dt>Z</dt>
               <dd>A Z coordinate, usually to move to</dd>
-            
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
-            
-              <dt>F</dt>
-              <dd>Format Feedrate in mm per minute. (Speed of print head movement)</dd>
             </dl>
           
         </td>
@@ -2344,8 +2203,14 @@ This procedure is usually more reliable than mechanical adjustments of a Z MIN e
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
+              <dt>X</dt>
+              <dd>A X coordinate, usually to move to</dd>
+            
+              <dt>Y</dt>
+              <dd>A Y coordinate, usually to move to</dd>
+            
+              <dt>Z</dt>
+              <dd>A Z coordinate, usually to move to</dd>
             </dl>
           
         </td>
@@ -2448,10 +2313,7 @@ S<factor in percent>- set extrude factor override percentage</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -2503,10 +2365,7 @@ P and S are extruder screw rotations. See also M227.</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -2532,9 +2391,6 @@ See also M227.</td>
             <dl class="compact">
               <dt>S</dt>
               <dd>Power parameter, such as the voltage to send to a motor</dd>
-            
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
             </dl>
           
         </td>
@@ -2559,10 +2415,7 @@ S0 Enable wait for temperature change</td>
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -2587,10 +2440,7 @@ Echoing may be controlled in some firmwares with M111
         </td>
         <td class="no-padding">
           
-            <dl class="compact">
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
-            </dl>
+            &nbsp;
           
         </td>
         <td>
@@ -2660,11 +2510,11 @@ used to cool parts/heated-bed down after printing for easy remove of the parts a
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            
               <dt>P</dt>
               <dd>Time  parameter, such as a time in millimetersseconds</dd>
+            
+              <dt>S</dt>
+              <dd>Power parameter, such as the voltage to send to a motor</dd>
             </dl>
           
         </td>
@@ -2690,14 +2540,8 @@ Play beep sound, use to notify important events like the end of printing. [http:
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            
               <dt>P</dt>
               <dd>Time  parameter, such as a time in millimetersseconds</dd>
-            
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
             </dl>
           
         </td>
@@ -2724,9 +2568,6 @@ Example: M301 W125</td>
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            
               <dt>P</dt>
               <dd>Time  parameter, such as a time in millimetersseconds</dd>
             </dl>
@@ -2753,17 +2594,11 @@ Sets Proportional, Integral and Derivative values for bed</td>
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>R</dt>
-              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
-            
-              <dt>P</dt>
-              <dd>Time  parameter, such as a time in millimetersseconds</dd>
-            
               <dt>E</dt>
               <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
             
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
+              <dt>R</dt>
+              <dd>Temperature Parameter - used for temperatures in Celcius degrees</dd>
             </dl>
           
         </td>
@@ -2789,9 +2624,6 @@ Set the color of your RGB LEDs that are connected to PWM-enabled pins.  Note, th
         <td class="no-padding">
           
             <dl class="compact">
-              <dt>S</dt>
-              <dd>Power parameter, such as the voltage to send to a motor</dd>
-            
               <dt>X</dt>
               <dd>A X coordinate, usually to move to</dd>
             
@@ -2800,9 +2632,6 @@ Set the color of your RGB LEDs that are connected to PWM-enabled pins.  Note, th
             
               <dt>Z</dt>
               <dd>A Z coordinate, usually to move to</dd>
-            
-              <dt>E</dt>
-              <dd>Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.</dd>
             </dl>
           
         </td>

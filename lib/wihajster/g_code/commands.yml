@@ -12,13 +12,16 @@
     driven in a straight line.  For them G0 allowed any movement in space to get to
     the destination as fast as possible.)'
   :accepts:
-  - :X
-  - :R
+  - :E
   - :F
+  - :X
+  - :Y
+  - :Z
+  :supported: true
 - :code: G1
   :name: Controlled move
   :example: G1 X90.6 Y13.8 E22.4
-  :method_name: controlled_move
+  :method_name: move
   :description: ! "\nGo in a straight line from the current (X, Y) point to the point
     (90.6, 13.8), extruding material as the move happens from the current extruded
     length to a length of 22.4 mm.\nRepRap does subtle things with feedrates.  Thus:\n<pre>\nG1
@@ -41,12 +44,12 @@
     dribble) simply use G1 to send an E value that is less than the currently extruded
     length."
   :accepts:
-  - :Y
-  - :R
+  - :E
   - :F
   - :X
-  - :E
+  - :Y
   - :Z
+  :supported: true
 - :code: G28
   :name: Move to Origin
   :example: G28
@@ -59,23 +62,24 @@
     be zeroed.  Thus \nG28 X0 Y72.3\nwill zero the X and Y axes, but not Z.  The actual
     coordinate values are ignored."
   :accepts:
-  - :R
   - :X
   - :Y
   - :Z
+  :supported: true
 - :code: G29
   :name: Detailed Z-Probe
   :example: 
   :method_name: detailed_z_probe
   :description: probes the bed at 3 points.
   :accepts: []
+  :supported: true
 - :code: G30
   :name: Single Z Probe
   :example: 
   :method_name: single_z_probe
   :description: probes bed at current XY location.
-  :accepts:
-  - :X
+  :accepts: []
+  :supported: true
 - :code: G31
   :name: Report Current Probe status
   :example: 
@@ -83,6 +87,7 @@
   :description: reports whether Z probe is triggered.
   :accepts:
   - :Z
+  :supported: true
 - :code: G32
   :name: Probe Z and calibrate with FPU
   :example: 
@@ -90,6 +95,7 @@
   :description: probes the bed at 3 points and updates transformation matrix for bed
     leveling compensation.
   :accepts: []
+  :supported: true
 - :code: G4
   :name: Dwell
   :example: G4 P200
@@ -99,7 +105,9 @@
     In this case sit still doing nothing for 200 milliseconds.  During delays the
     state of the machine (for example the temperatures of its extruders) will still
     be preserved and controlled.'
-  :accepts: []
+  :accepts:
+  - :P
+  :supported: true
 - :code: G10
   :name: Head Offset
   :example: G10 P3 X17.8 Y-19.3 Z0.0 R140 S205
@@ -119,11 +127,12 @@
     .26 M109 Deprecation, G10 Introduction | subject to discussion]]."
   :accepts:
   - :P
+  - :R
+  - :S
   - :X
   - :Y
   - :Z
-  - :R
-  - :S
+  :supported: true
 - :code: G20
   :name: Set Units to Inches
   :example: G20
@@ -132,6 +141,7 @@
 
     Units from now on are in inches.'
   :accepts: []
+  :supported: true
 - :code: G21
   :name: Set Units to Millimeters
   :example: G21
@@ -139,8 +149,8 @@
   :description: ! '
 
     Units from now on are in millimeters.  (This is the RepRap default.)'
-  :accepts:
-  - :R
+  :accepts: []
+  :supported: true
 - :code: G90
   :name: Set to Absolute Positioning
   :example: G90
@@ -149,8 +159,8 @@
 
     All coordinates from now on are absolute relative to the origin of the machine.  (This
     is the RepRap default.)'
-  :accepts:
-  - :R
+  :accepts: []
+  :supported: true
 - :code: G91
   :name: Set to Relative Positioning
   :example: G91
@@ -159,6 +169,7 @@
 
     All coordinates from now on are relative to the last position.'
   :accepts: []
+  :supported: true
 - :code: G92
   :name: Set Position
   :example: G92 X10 E90
@@ -171,7 +182,9 @@
 
     A G92 without coordinates will reset all axes to zero.'
   :accepts:
+  - :E
   - :X
+  :supported: true
 - :code: M0
   :name: Stop
   :example: M0
@@ -181,9 +194,8 @@
     The RepRap machine finishes any moves left in its buffer, then shuts down.  All
     motors and heaters are turned off.  It can be started again by pressing the reset
     button on the master microcontroller.  See also M1, M112.'
-  :accepts:
-  - :R
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M1
   :name: Sleep
   :example: M1
@@ -193,9 +205,8 @@
     The RepRap machine finishes any moves left in its buffer, then shuts down.  All
     motors and heaters are turned off.  It can still be sent G and M codes, the first
     of which will wake it up again.  See also M0, M112.'
-  :accepts:
-  - :R
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M3
   :name: Spindle On, Clockwise  (CNC specific)
   :example: M3 S4000
@@ -204,7 +215,8 @@
 
     The spindle is turned on with a speed of 4000 RPM.'
   :accepts:
-  - :R
+  - :S
+  :supported: true
 - :code: M4
   :name: Spindle On, Counter-Clockwise (CNC specific)
   :example: M4 S4000
@@ -213,7 +225,8 @@
 
     The spindle is turned on with a speed of 4000 RPM.'
   :accepts:
-  - :R
+  - :S
+  :supported: true
 - :code: M5
   :name: Spindle Off (CNC specific)
   :example: M5
@@ -222,6 +235,7 @@
 
     The spindle is turned off.'
   :accepts: []
+  :supported: true
 - :code: M7
   :name: Mist Coolant On (CNC specific)
   :example: M7
@@ -230,6 +244,7 @@
 
     Mist coolant is turned on (if available)'
   :accepts: []
+  :supported: true
 - :code: M8
   :name: Flood Coolant On (CNC specific)
   :example: M8
@@ -237,8 +252,8 @@
   :description: ! '
 
     Flood coolant is turned on (if available)'
-  :accepts:
-  - :F
+  :accepts: []
+  :supported: true
 - :code: M9
   :name: Coolant Off (CNC specific)
   :example: M9
@@ -247,6 +262,7 @@
 
     All coolant systems are turned off.'
   :accepts: []
+  :supported: true
 - :code: M10
   :name: Vacuum On (CNC specific)
   :example: M10
@@ -255,6 +271,7 @@
 
     Dust collection vacuum system turned on.'
   :accepts: []
+  :supported: true
 - :code: M11
   :name: Vacuum Off (CNC specific)
   :example: M11
@@ -263,12 +280,14 @@
 
     Dust collection vacuum system turned off.'
   :accepts: []
+  :supported: true
 - :code: M17
   :name: Enable/Power all stepper motors
   :example: M17
   :method_name: enable_power_all_stepper_motors
   :description: ''
   :accepts: []
+  :supported: true
 - :code: M18
   :name: Disable all stepper motors
   :example: M18
@@ -279,8 +298,8 @@
 
     - Is this not the same as [[#M84:_Stop_idle_hold|M84]]? --  [[User:MrAlvin|MrAlvin]]
     05:53, 20 September 2012 (UTC)'
-  :accepts:
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M20
   :name: List SD card
   :example: M20
@@ -295,9 +314,8 @@
     The trailing comma is optional.  Note that file names are returned in upper case,
     but - when sent to the M23 command (below) they must be in lower case.  This seems
     to be a function of the SD software.  Go figure...'
-  :accepts:
-  - :S
-  - :F
+  :accepts: []
+  :supported: true
 - :code: M21
   :name: Initialize SD card
   :example: M21
@@ -307,8 +325,8 @@
     The SD card is initialized. If an SD card is loaded when the machine is switched
     on, this will happen by default. SD card must be initialized for the other SD
     functions to work.'
-  :accepts:
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M22
   :name: Release SD card
   :example: M22
@@ -316,8 +334,8 @@
   :description: ! '
 
     SD card is released and can be physically removed.'
-  :accepts:
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M23
   :name: Select SD file
   :example: M23 filename.gco
@@ -327,6 +345,7 @@
     The file specified as filename.gco (8.3 naming convention is supported) is selected
     ready for printing.'
   :accepts: []
+  :supported: true
 - :code: M24
   :name: Start/resume SD print
   :example: M24
@@ -335,6 +354,7 @@
 
     The machine prints from the file selected with the M23 command.'
   :accepts: []
+  :supported: true
 - :code: M25
   :name: Pause SD print
   :example: M25
@@ -344,6 +364,7 @@
     The machine pause printing at the current position within the file selected with
     the M23 command.'
   :accepts: []
+  :supported: true
 - :code: M26
   :name: Set SD position
   :example: M26
@@ -353,6 +374,7 @@
     Set SD position in bytes (M26 S12345).'
   :accepts:
   - :S
+  :supported: true
 - :code: M27
   :name: Report SD print status
   :example: M27
@@ -360,9 +382,8 @@
   :description: ! '
 
     Report SD print status.'
-  :accepts:
-  - :R
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M28
   :name: Begin write to SD card
   :example: M28 filename.gco
@@ -371,9 +392,8 @@
 
     File specified by filename.gco is created (or overwritten if it exists) on the
     SD card and all subsequent commands sent to the machine are written to that file.'
-  :accepts:
-  - :F
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M29
   :name: Stop writing to SD card
   :example: M29 filename.gco
@@ -382,8 +402,8 @@
 
     File opened by M28 command is closed, and all subsequent commands sent to the
     machine are executed as normal.'
-  :accepts:
-  - :F
+  :accepts: []
+  :supported: true
 - :code: M40
   :name: Eject
   :example: 
@@ -396,11 +416,10 @@
 
     See also M240 and M241 below.'
   :accepts:
-  - :R
   - :X
   - :Y
   - :Z
-  - :S
+  :supported: true
 - :code: M41
   :name: Loop
   :example: M41
@@ -420,15 +439,15 @@
     and
 
     # When there''s an error (such as a heater failure).'
-  :accepts:
-  - :R
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M42
   :name: Stop on material exhausted / Switch I/O pin
   :example: 
   :method_name: stop_on_material_exhausted_switch_i_o_pin
   :description: ''
   :accepts: []
+  :supported: true
 - :code: M43
   :name: Stand by on material exhausted
   :example: M43
@@ -441,10 +460,10 @@
     is maintained.  The machine will still respond to G and M code commands in this
     state.'
   :accepts:
-  - :R
   - :X
   - :Y
   - :Z
+  :supported: true
 - :code: M80
   :name: ATX Power On
   :example: M80
@@ -456,8 +475,8 @@
 
     ''''''Note'''''': some firmwares, like [[Teacup Firmware | Teacup]], handle power
     on/off automatically, so this is redundant there.'
-  :accepts:
-  - :F
+  :accepts: []
+  :supported: true
 - :code: M81
   :name: ATX Power Off
   :example: M81
@@ -466,6 +485,7 @@
 
     Turns off the ATX power supply. Counterpart to M80.'
   :accepts: []
+  :supported: true
 - :code: M82
   :name: set extruder to absolute mode
   :example: M82
@@ -476,6 +496,7 @@
 
     This is the default in repetier.'
   :accepts: []
+  :supported: true
 - :code: M83
   :name: set extruder to relative mode
   :example: M83
@@ -484,6 +505,7 @@
 
     makes the extruder interpret extrusion values as relative positions.'
   :accepts: []
+  :supported: true
 - :code: M84
   :name: Stop idle hold
   :example: M84
@@ -494,8 +516,8 @@
     annoying noises, which can be stopped by disabling the hold. Be aware that by
     disabling idle hold during printing, you will get quality issues. This is recommended
     only in between or after printjobs.'
-  :accepts:
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M92
   :name: Set axis_steps_per_unit
   :example: ! 'M92 X<newsteps> '
@@ -505,7 +527,8 @@
     Allows programming of steps per unit of axis till the electronics are reset for
     the specified axis. Very useful for calibration.'
   :accepts:
-  - :S
+  - :X
+  :supported: true
 - :code: M98
   :name: Get axis_hysteresis_mm
   :example: ! 'M98                       '
@@ -515,9 +538,8 @@
     Report the current hysteresis values in mm for all of the axis.
 
     Proposed for Marlin'
-  :accepts:
-  - :R
-  - :P
+  :accepts: []
+  :supported: true
 - :code: M99
   :name: Set axis_hysteresis_mm
   :example: ! 'M99 X<mm> Y<mm> Z<mm> E<mm>   '
@@ -532,9 +554,11 @@
 
     Proposed for Marlin'
   :accepts:
-  - :Y
   - :E
-  - :P
+  - :X
+  - :Y
+  - :Z
+  :supported: true
 - :code: M104
   :name: Set Extruder Temperature
   :example: M104 S190
@@ -552,6 +576,7 @@
     to discussion]]. --[[User:Traumflug|Traumflug]] 11:33, 19 July 2012 (UTC)'
   :accepts:
   - :S
+  :supported: true
 - :code: M105
   :name: Get Extruder Temperature
   :example: M105
@@ -563,9 +588,8 @@
     line sent to the host in response to this command looks like
 
     <tt>ok T:201 B:117</tt>'
-  :accepts:
-  - :R
-  - :F
+  :accepts: []
+  :supported: true
 - :code: M106
   :name: Fan On
   :example: M106 S127
@@ -577,8 +601,8 @@
     Mandatory parameter ''S'' declares the PWM value (0-255). M106 S0 turns the fan
     off.'
   :accepts:
-  - :P
   - :S
+  :supported: true
 - :code: M107
   :name: Fan Off
   :example: 
@@ -586,6 +610,7 @@
   :description: Deprecated. Use M106 S0 instead.
   :accepts:
   - :S
+  :supported: true
 - :code: M108
   :name: Set Extruder Speed
   :example: 
@@ -594,12 +619,14 @@
 
     (Deprecated in current firmware, see M113)'
   :accepts: []
+  :supported: true
 - :code: M109
   :name: Set Extruder Temperature and Wait
   :example: 
   :method_name: set_extruder_temperature_and_wait
   :description: ''
   :accepts: []
+  :supported: true
 - :code: M110
   :name: Set Current Line Number
   :example: M110 N123
@@ -610,8 +637,8 @@
     will be 124.
 
     <br style="clear: both" />'
-  :accepts:
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M111
   :name: Set Debug Level
   :example: M111 S6
@@ -637,8 +664,7 @@
     Example: M253'
   :accepts:
   - :S
-  - :R
-  - :E
+  :supported: true
 - :code: M112
   :name: Emergency Stop
   :example: M112
@@ -648,9 +674,8 @@
     Any moves in progress are immediately terminated, then RepRap shuts down.  All
     motors and heaters are turned off.  It can be started again by pressing the reset
     button on the master microcontroller.  See also M0 and M1.'
-  :accepts:
-  - :R
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M113
   :name: Set Extruder PWM
   :example: M113
@@ -663,8 +688,7 @@
     S0 is sent."
   :accepts:
   - :S
-  - :P
-  - :R
+  :supported: true
 - :code: M114
   :name: Get Current Position
   :example: M114
@@ -678,12 +702,11 @@
 
     <tt>ok C: X:0.00 Y:0.00 Z:0.00 E:0.00</tt>'
   :accepts:
-  - :R
+  - :E
   - :X
   - :Y
   - :Z
-  - :E
-  - :F
+  :supported: true
 - :code: M115
   :name: Get Firmware Version and Capabilities
   :example: M115
@@ -697,12 +720,8 @@
     was committed to svn for the FiveD Reprap firmware on 11 Oct 2010.  Work to more
     formally define protocol versions is currently (October 2010) being discussed.
     \ See [[M115_Keywords]] for one draft set of keywords and their meanings."
-  :accepts:
-  - :R
-  - :F
-  - :P
-  - :E
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M116
   :name: Wait
   :example: M116
@@ -711,8 +730,8 @@
 
     Wait for ''''all'''' temperatures and other slowly-changing variables to arrive
     at their set values.  See also M109.'
-  :accepts:
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M117
   :name: Get Zero Position
   :example: M117
@@ -727,11 +746,11 @@
     command allows you to measure and to diagnose such problems.  (E is included for
     completeness.  It doesn''t normally have an endstop.)'
   :accepts:
-  - :R
+  - :E
   - :X
   - :Y
   - :Z
-  - :E
+  :supported: true
 - :code: M118
   :name: Negotiate Features
   :example: M118 P42
@@ -743,8 +762,8 @@
 
     See [[Protocol_Feature_Negotiation]] for more info.'
   :accepts:
-  - :F
-  - :S
+  - :P
+  :supported: true
 - :code: M119
   :name: Get Endstop Status
   :example: M119
@@ -755,9 +774,8 @@
     any ''inverted endstop'' settings, so one can confirm that the machine is interpreting
     the endstops correctly.'
   :accepts:
-  - :R
   - :X
-  - :S
+  :supported: true
 - :code: M126
   :name: Open Valve
   :example: M126 P500
@@ -766,7 +784,9 @@
 
     Open the extruder''s valve (if it has one) and wait 500 milliseconds for it to
     do so.'
-  :accepts: []
+  :accepts:
+  - :P
+  :supported: true
 - :code: M127
   :name: Close Valve
   :example: M127 P400
@@ -775,7 +795,9 @@
 
     Close the extruder''s valve (if it has one) and wait 400 milliseconds for it to
     do so.'
-  :accepts: []
+  :accepts:
+  - :P
+  :supported: true
 - :code: M128
   :name: Extruder Pressure PWM
   :example: M128 S255
@@ -784,8 +806,8 @@
 
     PWM value to control internal extruder pressure. S255 is full pressure.'
   :accepts:
-  - :P
   - :S
+  :supported: true
 - :code: M129
   :name: Extruder pressure off
   :example: M129 P100
@@ -795,8 +817,8 @@
     In addition to setting Extruder pressure to 0, you can turn the pressure off entirely.
     P400 will wait 100ms to do so.'
   :accepts:
-  - :E
   - :P
+  :supported: true
 - :code: M130
   :name: Set PID P value
   :example: ! 'M130 P 0 S 8.0  '
@@ -805,8 +827,9 @@
 
     <br style="clear: both" />'
   :accepts:
-  - :S
   - :P
+  - :S
+  :supported: true
 - :code: M131
   :name: Set PID I value
   :example: ! 'M130 P 1 S 0.5  '
@@ -815,7 +838,9 @@
 
     <br style="clear: both" />'
   :accepts:
+  - :P
   - :S
+  :supported: true
 - :code: M132
   :name: Set PID D value
   :example: ! 'M130 P 0 S 24  '
@@ -824,7 +849,9 @@
 
     <br style="clear: both" />'
   :accepts:
+  - :P
   - :S
+  :supported: true
 - :code: M133
   :name: Set PID I limit value
   :example: ! 'M130 P 1 S 264  '
@@ -833,7 +860,9 @@
 
     <br style="clear: both" />'
   :accepts:
+  - :P
   - :S
+  :supported: true
 - :code: M134
   :name: Write PID values to EEPROM
   :example: ! 'M134 '
@@ -842,6 +871,7 @@
 
     <br style="clear: both" />'
   :accepts: []
+  :supported: true
 - :code: M136
   :name: Print PID settings to host
   :example: ! 'M136 P1  '
@@ -851,6 +881,7 @@
     <br style="clear: both" />'
   :accepts:
   - :P
+  :supported: true
 - :code: M140
   :name: Bed Temperature (Fast)
   :example: M140 S55
@@ -862,6 +893,7 @@
     the bed).'
   :accepts:
   - :S
+  :supported: true
 - :code: M141
   :name: Chamber Temperature (Fast)
   :example: M141 S30
@@ -873,6 +905,7 @@
     chamber).'
   :accepts:
   - :S
+  :supported: true
 - :code: M142
   :name: Holding Pressure
   :example: M142 S1
@@ -886,7 +919,7 @@
     than zero, turn on holding.'
   :accepts:
   - :S
-  - :F
+  :supported: true
 - :code: M143
   :name: Maximum hot-end temperature
   :example: M143 S275
@@ -899,6 +932,7 @@
     instance an emergency stop. This is to prevent hot-end damage.'
   :accepts:
   - :S
+  :supported: true
 - :code: M160
   :name: Number of mixed materials
   :example: M160 S4
@@ -914,10 +948,11 @@
     as the move is made.\nThe fourth line has no physical effect, but sets the mix
     proportions for the start of the next move to 1:0:0:0."
   :accepts:
-  - :S
   - :E
+  - :S
   - :X
   - :Y
+  :supported: true
 - :code: M190
   :name: Wait for bed temperature to reach target temp
   :example: M190 S60
@@ -928,7 +963,9 @@
     temperature of the hot end and the bed every second.
 
     <br style="clear: both" />'
-  :accepts: []
+  :accepts:
+  - :S
+  :supported: true
 - :code: M206
   :name: set home offset
   :example: M206 X10.0 Y10.0 Z-0.4
@@ -943,7 +980,10 @@
     A similar command is G10, aligning these two is [[Talk:G-code#M104 .26 M109 Deprecation,
     G10 Introduction | subject to discussion]].'
   :accepts:
-  - :E
+  - :X
+  - :Y
+  - :Z
+  :supported: true
 - :code: M207
   :name: calibrate z axis by detecting z max length
   :example: M207
@@ -960,8 +1000,7 @@
     endstop.'
   :accepts:
   - :Z
-  - :E
-  - :F
+  :supported: true
 - :code: M208
   :name: set axis max travel
   :example: M208 X250 Y210 Z180
@@ -972,7 +1011,10 @@
 
     With Marlin firmware, this value can be saved to EEPROM using the M500 command.'
   :accepts:
-  - :E
+  - :X
+  - :Y
+  - :Z
+  :supported: true
 - :code: M209
   :name: enable automatic retract
   :example: M209 S1
@@ -984,6 +1026,7 @@
     as retract depending on the direction.'
   :accepts:
   - :S
+  :supported: true
 - :code: M220
   :name: set speed factor override percentage
   :example: M220 S80
@@ -993,6 +1036,7 @@
     S<factor in percent>- set speed factor override percentage'
   :accepts:
   - :S
+  :supported: true
 - :code: M221
   :name: set extrude factor override percentage
   :example: M221 S70
@@ -1002,6 +1046,7 @@
     S<factor in percent>- set extrude factor override percentage'
   :accepts:
   - :S
+  :supported: true
 - :code: M226
   :name: Gcode Initiated Pause
   :example: M226
@@ -1012,8 +1057,8 @@
     program execution is stopped and the printer waits for user interaction. This
     matches the behaviour of M1 in the [http://www.nist.gov/manuscript-publication-search.cfm?pub_id=823374
     NIST RS274NGC G-code standard] and M0 in Marlin firmware.'
-  :accepts:
-  - :R
+  :accepts: []
+  :supported: true
 - :code: M227
   :name: Enable Automatic Reverse and Prime
   :example: M227 P1600 S1600
@@ -1029,6 +1074,7 @@
   :accepts:
   - :P
   - :S
+  :supported: true
 - :code: M228
   :name: Disable Automatic Reverse and Prime
   :example: M228
@@ -1036,8 +1082,8 @@
   :description: ! '
 
     See also M227.'
-  :accepts:
-  - :S
+  :accepts: []
+  :supported: true
 - :code: M229
   :name: Enable Automatic Reverse and Prime
   :example: M229 P1.0 S1.0
@@ -1048,6 +1094,7 @@
   :accepts:
   - :P
   - :S
+  :supported: true
 - :code: M230
   :name: Disable / Enable Wait for Temperature Change
   :example: M230 S1
@@ -1059,7 +1106,7 @@
     S0 Enable wait for temperature change'
   :accepts:
   - :S
-  - :E
+  :supported: true
 - :code: M240
   :name: Start conveyor belt motor / Echo off
   :example: M240
@@ -1067,8 +1114,8 @@
   :description: ! "\nThe conveyor belt allows to start mass production of a part with
     a reprap.  \nEchoing may be controlled in some firmwares with M111\n<br style=\"clear:
     both\" />"
-  :accepts:
-  - :E
+  :accepts: []
+  :supported: true
 - :code: M241
   :name: Stop conveyor belt motor / echo on
   :example: M241
@@ -1078,8 +1125,8 @@
     Echoing may be controlled in some firmwares with M111
 
     <br style="clear: both" />'
-  :accepts:
-  - :E
+  :accepts: []
+  :supported: true
 - :code: M245
   :name: Start cooler
   :example: M245
@@ -1089,12 +1136,14 @@
     used to cool parts/heated-bed down after printing for easy remove of the parts
     after print'
   :accepts: []
+  :supported: true
 - :code: M246
   :name: Stop cooler
   :example: M246
   :method_name: stop_cooler
   :description: ''
   :accepts: []
+  :supported: true
 - :code: M300
   :name: Play beep sound
   :example: M300 S300 P1000
@@ -1105,8 +1154,9 @@
     Play beep sound, use to notify important events like the end of printing. [http://www.3dprinting-r2c2.com/?q=content/seasons-greetings
     See working example on] [[R2C2_RepRap_Electronics|R2C2 electronics]].'
   :accepts:
-  - :S
   - :P
+  - :S
+  :supported: true
 - :code: M301
   :name: Set PID parameters - Hot End
   :example: M301 P1 I2 D3 C5
@@ -1120,9 +1170,8 @@
 
     Example: M301 W125'
   :accepts:
-  - :S
   - :P
-  - :E
+  :supported: true
 - :code: M304
   :name: Set PID parameters - Bed
   :example: M304 P1 I2 D3
@@ -1131,8 +1180,8 @@
 
     Sets Proportional, Integral and Derivative values for bed'
   :accepts:
-  - :S
   - :P
+  :supported: true
 - :code: M420
   :name: Set RGB Colors as PWM
   :example: M420 R255 E255 B255
@@ -1145,10 +1194,9 @@
     the Green color is controlled by the E value instead of the G value due to the
     G code being a primary code that cannot be overridden.'
   :accepts:
-  - :R
-  - :P
   - :E
-  - :S
+  - :R
+  :supported: true
 - :code: T
   :name: Select Tool
   :example: T1
@@ -1176,8 +1224,7 @@
     again.  Don't forget also to turn on the heated bed (if any) if you use that trick.\nExtruder
     numbering starts at 0."
   :accepts:
-  - :S
   - :X
   - :Y
   - :Z
-  - :E
+  :supported: true

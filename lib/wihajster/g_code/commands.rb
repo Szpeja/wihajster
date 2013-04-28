@@ -58,6 +58,9 @@ module Wihajster::GCode::Commands
   }
 
   # Generates raw YAML file based on reprap g-code wiki entry.
+  #
+  # Wiki file entry is used to bootstrap YAML file,
+  # which is ment as a reference for RepRap printer commands.
   def self.generate_yaml
     raw_sections = File.read(__FILE__.gsub('.rb', '.wiki')).
       split(/^==/).
@@ -69,13 +72,13 @@ module Wihajster::GCode::Commands
       method_name = name.gsub(/\(.+\)/, '').strip.gsub(/\W+/,'_').downcase
       code = r[1].strip
 
+      potential_params = desc.scan(/\s([XYZEFSPR])\d*(?!\w)/).map{|m| m[0].to_sym}.uniq.sort
+
       example_matcher = /^(Example:) ([\w .<>-]+?)(#.+)?$/
       if match = example_matcher.match(desc)
         example = match[2]
         desc.sub!(example_matcher, '\3').sub('#', '')
       end
-
-      potential_params = desc.scan(/\s([XYZEFSPR])\d*(?!\d)/).map{|m| m[0].to_sym}.uniq
 
       {
         code: code, 
@@ -84,12 +87,14 @@ module Wihajster::GCode::Commands
         method_name: method_name, 
         description: desc, 
         accepts: potential_params,
+        supported: true,
       }
     end
 
     File.open(__FILE__.gsub('.rb', '.yml'), "w"){|f| f.write sections.to_yaml }
   end
 
+  # Generates help table based on reference YAML reference file.
   def self.generate_help
     require 'erb'
 
@@ -105,32 +110,38 @@ module Wihajster::GCode::Commands
     end
   end
 
+  # Loads list of commands from YAML reference.
+  #
+  # Returns hash in format of "Command Name" => Open Struct
+  #
+  # value has following methods:
+  #
+  # * code        [String]
+  # * name        [String]
+  # * example     [String|nil]
+  # * method_name [String]
+  # * description [String]
+  # * accepts     [Array]
+  #
   def self.commands
     @commands ||= 
       YAML.load_file(__FILE__.gsub('.rb', '.yml')).
       inject({}){|h, e| h[e[:name]] = OpenStruct.new(e); h }
   end
 
-  def format_command(name, args)
-    command = self.class.commands[name]
-    arguments = command.accepts.select{|a| args[a] }.map{|a| "#{a}#{args[a]}" } 
+  commands.each do |name, command|
+    if command.supported
+      define_method(command.method_name) do |options={}|
+        format_command(command.method_name, options)
+      end
+    end
+  end
+
+  def format_command(name, options={})
+    command = Wihajster::GCode::Commands.commands[name]
+    arguments = command.accepts.select{|a| args[a] }.
+      map{|a| "#{a}#{args[a]}" } 
 
     [command.code, arguments].flatten.join(" ")
-  end
-
-  def commands
-    self.class.commands
-  end
-
-  def method_missing(name, *args)
-    if respond_to?(name)
-      format_command(name, args)
-    else
-      super
-    end
-  end 
-
-  def respond_to?(name)
-    commands.has_key?(name.to_s) || super
   end
 end
