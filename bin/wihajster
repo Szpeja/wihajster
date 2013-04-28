@@ -23,7 +23,8 @@ class WihajsterApp
     prepare(profile)
 
     event_loop.run!(:non_block)
-    pry self
+
+    pry Console.new
   end
 
   def run(profile="")

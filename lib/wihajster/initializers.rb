@@ -15,8 +15,9 @@ module Wihajster::Initializers
     @rubygame_ready = true
   rescue => e
     if defined?(Rubygame::SDLError) && e.is_a?(Rubygame::SDLError)
-      ui.log :initializer, "Cannot initialize rubygame becouse of: #{e}."
-      ui.log :initializer, "Some features like joystick support or desktop ui will be disabled"
+      ui.log :initializer, :rubygame, 
+        "Cannot initialize rubygame becouse of: #{e}.\n"+
+        "Some features like joystick support or desktop ui will be disabled"
     else
       raise(e)
     end
@@ -38,8 +39,9 @@ module Wihajster::Initializers
     end
 
     if joystick_number
-      @joystick = ::Rubygame::Joystick.new(joystick_number.to_i)
-      ui.log :initializer, "Initialized joystick: #{@joystick.name.gsub(/\s+/, ' ').strip}"
+      Wihajster.joystick = @joystick = ::Rubygame::Joystick.new(joystick_number.to_i)
+      joy_name = @joystick.name.gsub(/\s+/, ' ').strip
+      ui.log :initializer, :jystick, "Initialized joystick: #{joy_name}"
     end
   end
   alias :initialize_joystick :joystick
@@ -47,12 +49,12 @@ module Wihajster::Initializers
   def initialize_printer(device=nil, speed=115200)
     device ||= ui.choose("Choose printer:", ::Wihajster::Printer.devices)
 
-    @printer = device && ::Wihajster::Printer.new(device, speed)
+    Wihajster.printer = @printer = device && ::Wihajster::Printer.new(device, speed)
 
     if @printer
-      ui.log :initializer, "Initialized printer on: #{device}"
+      ui.log :initializer, :printer, "Initialized printer on: #{device}"
     else
-      ui.log :initializer, "Failed to initialize printer"
+      ui.log :initializer, :printer, "Failed to initialize printer"
     end
   end
 

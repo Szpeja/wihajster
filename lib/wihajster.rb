@@ -6,6 +6,9 @@ require 'matrix'
 
 module Wihajster
   class << self
+    attr_accessor :printer
+    attr_accessor :joystick
+  
     attr_writer :ui
     def ui
       @ui ||= Ui.init(:console)
@@ -62,6 +65,7 @@ module Wihajster
   def event_loop() Wihajster.event_loop end
   def logger()     Wihajster.logger     end
   def config()     Wihajster.config     end
+  def printer()    Wihajster.printer    end
 
   module_function
 

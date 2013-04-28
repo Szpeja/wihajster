@@ -36,6 +36,8 @@ class Wihajster::EventLoop
       end
 
       process_joystick_event(event)
+    rescue => e
+      Wihajster.ui.exception(e)
     end
 
     def pressed_button
@@ -107,7 +109,6 @@ class Wihajster::EventLoop
           return if @stop
 
           @event_queue.each do |event|
-            next if event.is_a?(Rubygame::Events::JoystickAxisMoved) && event.value.abs < 0.1
             process_event(event)
           end
 

@@ -142,16 +142,17 @@ module Wihajster::GCode::Commands
 
   # Formats command into string validating parameters.
   # Unrecognized parameters generate warnings.
-  def format_command(command, options={})
-    command.accepts.select{|a| !args[a] }.each do |a|
-      Wihajster.ui.log :gcode, command.code, "Unrecognized option - #{a} for #{command.name}"
+  def format_command(c, params={})
+    params.select{|k,v| !c.accepts.include?(k) }.each do |k, v|
+      Wihajster.ui.log :gcode, c.code, 
+        "Unrecognized option #{k} for #{c.code} - #{c.method_name}"
     end
 
-    Wihajster::GCode::Commands.parameters.
-      select{|name, desc| args[name]}.
-      map{|a, d| "#{a}#{args[a]}" } 
+    arguments = Wihajster::GCode::Commands.parameters.
+      select{|name, desc| params[name]}.
+      map{|a, d| "#{a}#{params[a]}" } 
 
-    [command.code, arguments].flatten.join(" ")
+    [c.code, arguments].flatten.join(" ")
   end
 
   # Writes a gcode to output device.

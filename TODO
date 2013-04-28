@@ -1,13 +1,13 @@
 TOP LEVEL:
 
 + Stop fucking around.
-+ Connect to printer. DONE.
-- Emmit commands to printer. ALMOST. Fix concurency.
-- Allow emmiting commands by console. STARTED.
-+ Allow loading scripts. DONE
-- Generate documentation for methods. ALMOST. Add generation of codes to yard.
++ Connect to printer.
++ Emmit commands to printer. NEEDS TESTING
++ Allow emmiting commands by console. ALMOST.
++ Allow loading scripts.
++ Generate documentation for methods.
 + Allow to steer with gamepad.
-- Emit proper commands on gamepad moves.
+- Emit proper commands on gamepad moves. CHECK: units, relative vs. absolute. Feed rates
 - Add proper tests.
 - Add opengl visualization of scripts. (simple version).
 
