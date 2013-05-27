@@ -1,7 +1,26 @@
-module Wihajster::Scripts
+class Wihajster::Scripts
+  include Wihajster
+
+  attr_accessor :profile
+
+  def initialize(profile=nil)
+    @profile = profile || Whiajster.profile
+
+    trap("SIGINT") do
+      runner.process_event(Interrupt.new)
+      exit!
+    end
+  end
+
   attr_writer :scripts_path
   def scripts_path
-    @scripts_path ||= File.join(Wihajster.working_dir, profile)
+    @scripts_path ||= 
+      File.join(Wihajster.working_dir, profile)
+  end
+
+  def add_handler(event_module)
+    ui.log :scripts, :added_handler, event_module.to_s
+    runner.extend(event_module)
   end
 
   def load_script(script)
@@ -24,12 +43,13 @@ module Wihajster::Scripts
   end
 
   def reload_scripts!
-    reload! do
+    Thread.exclusive do
+      Wihajster.runner = Runner.new
       load_scripts
     end
   end
 
-  def monitor_scripts
+  def monitor!
     callback = lambda do |modified, added, removed|
       begin
         if removed.any?

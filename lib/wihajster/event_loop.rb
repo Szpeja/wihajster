@@ -2,26 +2,15 @@ class Wihajster::EventLoop
   include Wihajster
   include Scripts
 
-  attr_accessor :keep_running, :runner_thread, :profile
+  attr_accessor :keep_running, :runner_thread
   attr_reader :event_queue, :clock
 
   def initialize
-    @profile = Wihajster.profile
-    @runner  = Runner.new(self)
     @keep_running = true
-
-    trap("SIGINT") do
-      runner.process_event(Interrupt.new)
-      exit!
-    end
   end
 
   def running?
     @running && @keep_running && !@stop
-  end
-
-  def handlers
-    runner.__extended_modules - Runner.ancestors
   end
 
   def setup_rubygame
@@ -86,18 +75,6 @@ class Wihajster::EventLoop
     @runner_thread
   end
 
-  # Reloads runner
-  def reload!(&on_load)
-    ui.log :event_loop, :reloading, "Reloading event loop"
-
-    Thread.exclusive do
-      @runner = Runner.new(self)
-      on_load.call if on_load
-    end
-
-    self
-  end
-
   def stop
     ui.log :event_loop, :stopping, "Stopping event loop"
 
@@ -107,10 +84,5 @@ class Wihajster::EventLoop
 
   def stop!
     runner_thread.terminate
-  end
-
-  def add_handler(event_module)
-    ui.log :event_loop, :added_handler, event_module.to_s
-    runner.extend(event_module)
   end
 end

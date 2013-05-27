@@ -6,6 +6,12 @@ class Wihajster::Printer < Monitor
 
   attr_reader :device, :speed, :sp
 
+  # Setting direct mode will send commands straight to printer.
+  # Without queueing and waiting for printer to confirm.
+  # Should be used only for debugging.
+  attr_accessor :direct_mode
+
+  # Lists possible printer deices for Linux only right now.
   def self.devices
     Dir.glob('/dev/*{ACM,USB}*').to_a
   end
@@ -14,18 +20,34 @@ class Wihajster::Printer < Monitor
     super() # Create monitor mutex
 
     @device     = dev
+
+    set_defaults
+    set_options(opt)
+  end
+
+  def set_defaults
+    # Number of commands we're allowed to send.
+    # see http://reprap.org/wiki/GCODE_buffer_multiline_proposal
+    @can_send    = 0
+    @line_nr     = 0
+    @direct_mode = false
+
+    @send_queue  = Queue.new
+    @lines       = []
+  end
+
+  # Passes options to serial port.
+  #
+  # possible settings:
+  #
+  # speed:: in bauds (default: 115200)
+  # model:: [:reprap, :arduino]
+  def set_options(opt)
     @speed      = opt[:speed] || 115200
     @model      = opt[:model] || :reprap
 
-    @blocking   = 0 # Blocking indefinitely
-    @line_nr    = 0
-
-    # Number of commands we're allowed to send.
-    # see http://reprap.org/wiki/GCODE_buffer_multiline_proposal
-    @can_send   = 0
-
-    @send_queue = Queue.new
-    @lines      = []
+    # 0 - Blocking indefinitely, -1 nonblocking.
+    @blocking   = 0
   end
 
   def connect
@@ -36,7 +58,7 @@ class Wihajster::Printer < Monitor
       @sp.read_timeout = @blocking
 
       communication_thread
-      reset
+      hard_reset!
     end
 
     connected?
@@ -53,7 +75,7 @@ class Wihajster::Printer < Monitor
   end
 
   def can_write?
-    connected? && (@can_send > 0)
+    connected? && (@can_send > 0 || @direct_mode)
   end
 
   def state
@@ -87,7 +109,7 @@ class Wihajster::Printer < Monitor
     sleep(0.3);
   end
 
-  def hard_reset
+  def hard_reset!
     case @model
     when :reprap
       reset_reprap
@@ -95,10 +117,10 @@ class Wihajster::Printer < Monitor
       reset_arduino
     end
 
-    reset
+    reset!
   end
 
-  def reset
+  def reset!
     @lines.clear
     @send_queue.clear
     @line_nr = 0
@@ -118,7 +140,7 @@ class Wihajster::Printer < Monitor
       command = command[1].upcase.to_sym
 
       if command == "M110"
-        reset_queue
+        reset!
       else
         send_gcode(command)
       end
@@ -136,11 +158,11 @@ class Wihajster::Printer < Monitor
     checksum = line.each_byte.inject(0){|c, b| c ^= b }
     line = "#{line}*#{checksum}\n" #add checksum
     
-    self.synchronize do
+    synchronize do
       if can_write?
         send_to_printer(line)
       else
-        ui.log :queued, line
+        ui.log :printer, :queued, line
         @send_queue.push line
       end
     end
@@ -182,7 +204,7 @@ class Wihajster::Printer < Monitor
   #
   def communication_loop
     while connected? && line = readline
-      ui.log :received, line
+      ui.log :printer, :received, line
 
       if line.starts_with?(*greetings)
         @can_send = 1
@@ -209,7 +231,7 @@ class Wihajster::Printer < Monitor
 
   # Sends as many commands as possible to machine.
   def send_commands_from_queue
-    self.synchronize do
+    synchronize do
       return unless can_write?
 
       while @can_send > 0 && @send_queue.length > 0
@@ -220,8 +242,8 @@ class Wihajster::Printer < Monitor
 
   # Sends single line to printer.
   def send_to_printer(line_to_send)
-    self.synchronize do
-      ui.log :sending, line_to_send
+    synchronize do
+      ui.log :printer, :sending, line_to_send
 
       @can_send -= 1
       @sp.write(line_to_send)

@@ -48,6 +48,16 @@ module Wihajster
     end
     attr_reader :profile
 
+    attr_writer :runner
+    def runner
+      @runner ||= Runner.new
+    end
+
+    attr_writer :scripts
+    def scripts
+      @scripts ||= Scripts.new
+    end
+
     def configuration
       @configuration ||= Configuration.new(profile)
     end
@@ -57,7 +67,7 @@ module Wihajster
     end
  
     def add_event_handler(handler)
-      event_loop.add_handler(handler)
+      scripts.add_handler(handler)
     end
   end
 
@@ -66,6 +76,7 @@ module Wihajster
   def logger()     Wihajster.logger     end
   def config()     Wihajster.config     end
   def printer()    Wihajster.printer    end
+  def runner()     Wihajster.runner     end
 
   module_function
 
