@@ -20,7 +20,9 @@ module Wihajster::Joystick
     def process_event(event)
       super
 
-      Wihajster.ui.log :process_event, :joystick, "Processing event #{event.name}"
+      if event.joystick_event?
+        Wihajster.ui.log :process_event, :joystick, "Processing event #{event.name}"
+      end
 
       case event.name
         when :ClockTicked

@@ -29,8 +29,8 @@ class Wihajster::App
     Wihajster.profile = profile
     prepare()
 
-    require 'wihajster/joystick/calibaration'
-    Wihajster.add_handler Wihajster::Joystick::Calibration
+    require 'wihajster/joystick/calibration'
+    Wihajster.add Wihajster::Joystick::Calibration
 
     event_loop.run!
   end
@@ -40,7 +40,7 @@ class Wihajster::App
     prepare()
 
     require 'wihajster/runner/events_test'
-    Wihajster.add_handler Wihajster::Runner::EventsTest
+    Wihajster.add Wihajster::Runner::EventsTest
 
     event_loop.run!
   end
