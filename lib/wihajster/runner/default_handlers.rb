@@ -1,4 +1,4 @@
-module Wihajster::EventLoop::DefaultHandlers
+module Wihajster::Runner::DefaultHanlders
   # Process event from Rubygame.
   #
   # Does basic event processing - handles only quititng from application.

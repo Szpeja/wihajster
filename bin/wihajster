@@ -12,90 +12,6 @@ Bundler.require(:default, Wihajster.env)
 
 Wihajster.load_libraries
 
-class WihajsterApp
-  include Singleton
-
-  include Wihajster
-  include Wihajster::Initializers
-  include Wihajster::Reloader
-
-  def console(profile="")
-    prepare(profile)
-
-    event_loop.run!(:non_block)
-
-    pry event_loop.runner
-  end
-
-  def run(profile="")
-    prepare(profile)
-
-    event_loop.run!
-  end
-
-  def calibrate(profile="")
-    prepare(profile)
-
-    # We need to reload event loop so we clear all scripts
-    # loaded by a #initialize_event_loop
-    event_loop.reload!
-    Wihajster.add_event_handler Wihajster::Calibration
-
-    event_loop.run!
-  end
-
-  def events_test(profile="")
-    Wihajster.profile = profile
-    Wihajster.configuration.temporary!
-    Wihajster.config.scripts.monitor = false
-
-    prepare(profile)
-
-    # We need to reload event loop so we clear all scripts
-    # loaded by a #initialize_event_loop
-    event_loop.reload!
-
-    require 'wihajster/calibration/events_test'
-    Wihajster.add_event_handler Wihajster::Calibration::EventsTest
-
-    event_loop.run!
-  end
-
-  def test_run
-    Wihajster.profile = "test_run"
-    Wihajster.configuration.temporary!
-    Wihajster.config.joystick.id = 0
-    Wihajster.config.scripts.monitor = false
-
-    prepare("test_run")
-
-    event_loop.reload! # Clean event loop
-    Thread.new{ sleep 0.3; event_loop.stop }
-    event_loop.run!
-  end
-
-  def generate
-    # Use thor to generate - allows overriding etc.
-    FileUtils.mkdir_p "log"
-    Dir.glob(File.join(Wihajster.root, "examples", "*")) do |example|
-      FileUtils.cp example , Dir.pwd
-    end
-  end
-
-  protected
-
-  def prepare(profile)
-    Wihajster.profile = profile
-
-    enable_reloading
-
-    initialize_rubygame
-    initialize_joystick(config.joystick.id)
-    initialize_printer(config.printer.device, config.printer.speed)
-    initialize_scripts(profile, config.scripts.monitor)
-  end
-end
-
 def start(app)
   action = ARGV[0] || "run"
   methods = app.public_methods(false)
@@ -107,7 +23,6 @@ def start(app)
       app.send(method, *ARGV[1..-1])
     rescue ArgumentError => e
       $stderr.puts "Could not call action #{method} - #{e}"
-      $stderr.puts "#{e.class.name} #{e}\n  #{e.backtrace.join("\n  ")}"
       exit 2
     rescue => e
       $stderr.puts "Failed to load Wihajster"
@@ -134,4 +49,4 @@ def start(app)
   app
 end
 
-start WihajsterApp.instance
+start Wihajster::App.instance

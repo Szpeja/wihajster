@@ -3,7 +3,57 @@ require 'yaml'
 class Wihajster::Configuration
   attr_writer :config_name, :config_path
 
-  class OpenStructHash < Hash
+  class ConfigHash < BasicObject
+    attr_accessor :__config
+
+    def self.[](source)
+      new(Hash[source])
+    end
+
+    def initialize(hash={})
+      @hash = hash
+    end
+
+    def [](key)
+      @hash[key]
+    end
+
+    def []=(key, value)
+      prev = @hash[key]
+      curr = @hash[key] = __convert(value)
+
+      __config.save if prev != curr
+
+      curr
+    end
+
+    def ==(other)
+      other.is_a?(ConfigHash) && other.__hash == __hash
+    end
+
+    def __hash
+      @hash
+    end
+
+    def __convert(object)
+      converted = case object
+      when ConfigHash
+        object
+      when Hash
+        hash = {}
+        object.each{|k,v| hash[k] = __convert(v)}
+        ConfigHash[hash]
+      when Array
+        object.map {|e| convert(e) }
+      else
+        object
+      end
+
+      converted.__config = __config if converted.is_a?(ConfigHash)
+
+      converted
+    end
+
     def method_missing(name, *args, &block)
       return(super) if block
 
@@ -23,26 +73,34 @@ class Wihajster::Configuration
     end
   end
 
-  def default
-    {
-      joystick: {id: nil},
-      printer: {
-        device: nil,
-        speed: 115200,
-      },
-      scripts: {
-        monitor: true,
-      },
-    }
-  end
-
   def initialize(profile)
-    @auto_save = true
     self.profile = profile
   end
 
   def config_name
     @config_name || @profile.empty? ? "wihajster.yml" : (@profile + ".yml")
+  end
+
+  def defaults
+    default = {
+      default: {
+        joystick: { id: nil },
+        printer:  { device: nil, speed: 115200, },
+        scripts:  { monitor: true, },
+      },
+      "test_run" => {
+        joystick: { id: 0 },
+        printer:  { device: nil, speed: 115200, },
+        scripts:  { monitor: false, },
+      },
+      "events_test" => {
+        joystick: { id: 0 },
+        printer:  { device: nil, speed: 115200, },
+        scripts:  { monitor: false, },
+      },
+    }
+
+    default[@profile] || default[:default]
   end
 
   def config_path
@@ -57,19 +115,11 @@ class Wihajster::Configuration
     YAML.dump(@data)
   end
 
-  def convert(object)
-    case object
-    when OpenStructHash
-      object
-    when Hash
-      hash = {}
-      object.each{|k,v| hash[k] = convert(v)}
-      OpenStructHash[hash]
-    when Array
-      object.map {|e| convert(e) }
-    else
-      object
-    end
+  def convert(hash)
+    config_hash = ConfigHash[hash]
+    config_hash.__config = self
+
+    config_hash
   end
 
   def load
@@ -77,7 +127,7 @@ class Wihajster::Configuration
       @raw_config = YAML.load_file(config_path)
       @data = convert( @raw_config )
     else
-      @data = convert( default )
+      @data = convert( defaults )
     end
 
     self
@@ -92,10 +142,6 @@ class Wihajster::Configuration
     end
 
     self
-  end
-
-  def temporary!
-    @auto_save = false
   end
 
   def profile=(profile)

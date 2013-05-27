@@ -1,5 +1,3 @@
-require 'erb'
-
 # List of commands that can be sent to RepRap machine.
 #
 # Prepared based on http://reprap.org/wiki/G-code

@@ -1,6 +1,10 @@
 module Wihajster::Initializers
   attr_accessor :joystick, :event_queue, :printer
 
+  def rubygame_ready?
+    !!@rubygame_ready
+  end
+
   def initialize_rubygame
     silence_stream(STDERR) do
       require 'rubygame'
@@ -23,11 +27,7 @@ module Wihajster::Initializers
     end
   end
 
-  def rubygame_ready?
-    !!@rubygame_ready
-  end
-
-  def joystick(joystick_number=nil)
+  def initialize_joystick(joystick_number=nil)
     return unless rubygame_ready?
 
     joystick_number ||= begin 
@@ -41,10 +41,9 @@ module Wihajster::Initializers
     if joystick_number
       Wihajster.joystick = @joystick = ::Rubygame::Joystick.new(joystick_number.to_i)
       joy_name = @joystick.name.gsub(/\s+/, ' ').strip
-      ui.log :initializer, :jystick, "Initialized joystick: #{joy_name}"
+      ui.log :initializer, :joystick, "Initialized joystick: #{joy_name}"
     end
   end
-  alias :initialize_joystick :joystick
 
   def initialize_printer(device=nil, speed=115200)
     device ||= ui.choose("Choose printer:", ::Wihajster::Printer.devices)
@@ -59,8 +58,8 @@ module Wihajster::Initializers
   end
 
   def initialize_scripts(profile="", monitor=:monitor)
-    event_loop.load_scripts
-    event_loop.monitor_scripts if monitor
+    scripts.load_scripts
+    scripts.monitor if monitor
   end
 
   protected

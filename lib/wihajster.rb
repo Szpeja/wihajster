@@ -50,7 +50,7 @@ module Wihajster
 
     attr_writer :runner
     def runner
-      @runner ||= Runner.new
+      @runner ||= Runner.init
     end
 
     attr_writer :scripts

@@ -5,11 +5,6 @@ class Wihajster::Scripts
 
   def initialize(profile=nil)
     @profile = profile || Whiajster.profile
-
-    trap("SIGINT") do
-      runner.process_event(Interrupt.new)
-      exit!
-    end
   end
 
   attr_writer :scripts_path
@@ -45,6 +40,7 @@ class Wihajster::Scripts
   def reload_scripts!
     Thread.exclusive do
       Wihajster.runner = Runner.new
+      Pry.run_command "cd Wihajster.runner"
       load_scripts
     end
   end

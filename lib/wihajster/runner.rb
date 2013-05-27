@@ -1,6 +1,13 @@
 class Wihajster::Runner
+  Wihajster.load_libraries "runner"
+
   include Wihajster
+  include DefaultHandlers
   include GCode
+
+  trap("SIGINT") do
+    Wihajster.runner.process_event(Interrupt.new)
+  end
 
   def devices
     Printer.devices
@@ -36,7 +43,11 @@ class Wihajster::Runner
     printer.direct_mode = false
   end
 
-  def handlers
+  def __handlers
     (class << self; self end).included_modules - self.class.ancestors
+  end
+
+  def __pry
+    binding.pry
   end
 end
