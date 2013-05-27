@@ -1,3 +1,6 @@
+require 'forwardable'
+require 'highline'
+
 class Wihajster::Ui::Console
   extend Forwardable
   def_delegators :highline, :agree, :ask, :say

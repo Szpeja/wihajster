@@ -44,21 +44,6 @@ require 'erb'
 # *:: Checksum. Used to check for communications errors.
 #
 module Wihajster::GCode::Commands
-  def self.parameters
-  {
-    S: "Power parameter, such as the voltage to send to a motor",
-    P: "Time  parameter, such as a time in millimetersseconds",
-    R: "Temperature Parameter - used for temperatures in Celcius degrees",
-    
-    X: "A X coordinate, usually to move to",
-    Y: "A Y coordinate, usually to move to",
-    Z: "A Z coordinate, usually to move to",
-    E: "Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.",
-
-    F: "Format Feedrate in mm per minute. (Speed of print head movement)",
-  }
-  end
-
   # Generates raw YAML file based on reprap g-code wiki entry.
   #
   # Wiki file entry is used to bootstrap YAML file,
@@ -110,54 +95,5 @@ module Wihajster::GCode::Commands
     File.open(File.join(Wihajster.root, "doc", "gcode.html"), "w") do |f|
       f.write help_table
     end
-  end
-
-  # Loads list of commands from YAML reference.
-  #
-  # Returns hash in format of "Command Name" => Open Struct
-  #
-  # value has following methods:
-  #
-  # * code        [String]
-  # * name        [String]
-  # * example     [String|nil]
-  # * method_name [String]
-  # * description [String]
-  # * accepts     [Array]
-  #
-  def self.commands
-    @commands ||= 
-      YAML.load_file(__FILE__.gsub('.rb', '.yml')).
-      inject({}){|h, e| h[e[:name]] = OpenStruct.new(e); h }
-  end
-
-  commands.each do |name, command|
-    if command.supported
-      define_method(command.method_name) do |options={}|
-        fc = format_command(command, options)
-        write_command(fc)
-      end
-    end
-  end
-
-  # Formats command into string validating parameters.
-  # Unrecognized parameters generate warnings.
-  def format_command(c, params={})
-    params.select{|k,v| !c.accepts.include?(k) }.each do |k, v|
-      Wihajster.ui.log :gcode, c.code, 
-        "Unrecognized option #{k} for #{c.code} - #{c.method_name}"
-    end
-
-    arguments = Wihajster::GCode::Commands.parameters.
-      select{|name, desc| params[name]}.
-      map{|a, d| "#{a}#{params[a]}" } 
-
-    [c.code, arguments].flatten.join(" ")
-  end
-
-  # Writes a gcode to output device.
-  # This method should be overriden in class that includes this module.
-  def write_command(formated_command)
-    Wihajster.ui.log(:gcode, :write, formated_command)
   end
 end
