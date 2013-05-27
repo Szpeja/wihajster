@@ -85,11 +85,6 @@ class Wihajster::Configuration
         printer:  { device: nil, speed: 115200, },
         scripts:  { monitor: true, },
       },
-      "test_run" => {
-        joystick: { id: 0 },
-        printer:  { device: nil, speed: 115200, },
-        scripts:  { monitor: false, },
-      },
       "events_test" => {
         joystick: { id: 0 },
         printer:  { device: nil, speed: 115200, },

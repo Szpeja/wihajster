@@ -1,11 +1,11 @@
 # encoding: utf-8
-module ExtraCommands
+module PrinterCommands
   # Called each time module is loaded.
   def self.extended(base)
-    Wihajster.ui.log :script, :extended, "Added extra methods."
+    Wihajster.ui.log :script, :extended, "Added printer methods."
   end
 
-  def init
+  def printer_reset
     set_units_to_millimeters 
     set_to_absolute_positioning
     fan_off
@@ -37,5 +37,5 @@ module ExtraCommands
     move X:  0, Y:  0
   end
   
-  Wihajster.add_event_handler(self)
+  Wihajster.add self
 end

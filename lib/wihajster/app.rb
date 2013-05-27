@@ -6,17 +6,19 @@ class Wihajster::App
   include Wihajster::Reloader
 
   def console(profile="")
-    prepare(profile)
+    Wihajster.profile = profile
+    prepare()
 
     initialize_scripts(profile, config.scripts.monitor)
 
     event_loop.run!(:in_background) if rubygame_ready?
 
-    Wihajster.runner.__pry
+    Wihajster::PryConsole.start
   end
 
   def run(profile="")
-    prepare(profile)
+    Wihajster.profile = profile
+    prepare()
 
     initialize_scripts(profile, config.scripts.monitor)
 
@@ -24,30 +26,37 @@ class Wihajster::App
   end
 
   def joystick_calibration(profile="")
-    prepare(profile)
+    Wihajster.profile = profile
+    prepare()
 
     require 'wihajster/joystick/calibaration'
-    Wihajster.add_event_handler Wihajster::Joystick::Calibration
+    Wihajster.add_handler Wihajster::Joystick::Calibration
 
     event_loop.run!
   end
 
   def events_test
-    prepare("events_test")
+    Wihajster.profile = "events_test"
+    prepare()
 
     require 'wihajster/runner/events_test'
-    Wihajster.add_event_handler Wihajster::Calibration::EventsTest
+    Wihajster.add_handler Wihajster::Runner::EventsTest
 
     event_loop.run!
   end
 
-  def test_run
-    prepare("test_run")
+  def test_run(profile="")
+    Wihajster.profile = profile
+    config.joystick.__hash[:id] = 0
+    prepare
+
+    initialize_scripts(profile, false)
 
     Thread.new do
-      sleep 0.3
+      sleep 0.5
       event_loop.stop
     end
+
     event_loop.run!
   end
 
@@ -61,10 +70,8 @@ class Wihajster::App
 
   protected
 
-  def prepare(profile)
-    Wihajster.profile = profile
-
-    enable_reloading
+  def prepare
+    enable_reloading # if config.reload_wihajster ?
 
     initialize_rubygame
     initialize_joystick(config.joystick.id)

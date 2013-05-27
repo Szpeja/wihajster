@@ -4,7 +4,7 @@ class Wihajster::Scripts
   attr_accessor :profile
 
   def initialize(profile=nil)
-    @profile = profile || Whiajster.profile
+    @profile = profile || Wihajster.profile
   end
 
   attr_writer :scripts_path
@@ -39,13 +39,12 @@ class Wihajster::Scripts
 
   def reload_scripts!
     Thread.exclusive do
-      Wihajster.runner = Runner.init
-      Pry.run_command "cd Wihajster.runner"
+      Runner.reset
       load_scripts
     end
   end
 
-  def monitor!
+  def monitor
     callback = lambda do |modified, added, removed|
       begin
         if removed.any?

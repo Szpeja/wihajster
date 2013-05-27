@@ -1,8 +1,5 @@
 # encoding: utf-8
 module JoystickEvents
-  include Wihajster
-  include Wihajster::GCode::Commands
-
   # Called each time module is loaded.
   def self.extended(base)
     Wihajster.ui.log :script, :extended, "Joystick events loaded. Check if ANALOG is ON :)"
@@ -107,5 +104,5 @@ module JoystickEvents
     end
   end
 
-  Wihajster.add_event_handler(self)
+  Wihajster.add self
 end
