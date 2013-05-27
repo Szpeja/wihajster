@@ -72,7 +72,7 @@ module Wihajster::GCode
     # * accepts     [Array]
     #
     def load_commands 
-      YAML.load_file(__FILE__.gsub('.rb', '.yml')).
+      YAML.load_file(File.join(__FILE__.gsub(/\.rb$/, ''), 'commands.yml')).
         inject({}){|h, e| h[e[:name]] = OpenStruct.new(e); h }
     end
 

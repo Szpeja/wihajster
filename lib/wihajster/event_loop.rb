@@ -1,6 +1,5 @@
 class Wihajster::EventLoop
   include Wihajster
-  include Scripts
 
   attr_accessor :keep_running, :runner_thread
   attr_reader :event_queue, :clock

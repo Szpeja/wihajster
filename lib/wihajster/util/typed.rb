@@ -1,3 +1,5 @@
+require 'set'
+
 module Boolean
 end
 TrueClass.send(:include, Boolean)
@@ -5,8 +7,6 @@ FalseClass.send(:include, Boolean)
 
 module Wihajster
   module Typed
-    require 'set'
-
     module ClassMethods
       def attributes
         @attributes ||= Set.new

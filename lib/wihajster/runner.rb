@@ -2,8 +2,12 @@ class Wihajster::Runner
   Wihajster.load_libraries "runner"
 
   include Wihajster
-  include DefaultHandlers
-  include GCode
+  include Wihajster::Runner::DefaultHandlers
+  include Wihajster::GCode
+
+  def self.init
+    new
+  end
 
   trap("SIGINT") do
     Wihajster.runner.process_event(Interrupt.new)

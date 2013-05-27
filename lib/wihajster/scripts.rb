@@ -39,7 +39,7 @@ class Wihajster::Scripts
 
   def reload_scripts!
     Thread.exclusive do
-      Wihajster.runner = Runner.new
+      Wihajster.runner = Runner.init
       Pry.run_command "cd Wihajster.runner"
       load_scripts
     end

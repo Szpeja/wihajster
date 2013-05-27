@@ -6,8 +6,24 @@ class Wihajster::Configuration
   class ConfigHash < BasicObject
     attr_accessor :__config
 
-    def self.[](source)
-      new(Hash[source])
+    def self.convert(source, config)
+      converted = 
+        case source
+        when ConfigHash
+          source
+        when ::Hash
+          hash = {}
+          source.each{|k,v| hash[k] = convert(v, config)}
+          ConfigHash.new(hash)
+        when ::Array
+          source.map {|e| convert(e, config) }
+        else
+          source
+        end
+
+      converted.__config = config if ConfigHash === converted
+
+      converted
     end
 
     def initialize(hash={})
@@ -20,38 +36,19 @@ class Wihajster::Configuration
 
     def []=(key, value)
       prev = @hash[key]
-      curr = @hash[key] = __convert(value)
+      curr = @hash[key] = self.class.convert(value)
 
       __config.save if prev != curr
 
       curr
     end
 
-    def ==(other)
-      other.is_a?(ConfigHash) && other.__hash == __hash
-    end
-
     def __hash
       @hash
     end
 
-    def __convert(object)
-      converted = case object
-      when ConfigHash
-        object
-      when Hash
-        hash = {}
-        object.each{|k,v| hash[k] = __convert(v)}
-        ConfigHash[hash]
-      when Array
-        object.map {|e| convert(e) }
-      else
-        object
-      end
-
-      converted.__config = __config if converted.is_a?(ConfigHash)
-
-      converted
+    def ==(other)
+      other.is_a?(ConfigHash) && other.__hash == __hash
     end
 
     def method_missing(name, *args, &block)
@@ -116,10 +113,7 @@ class Wihajster::Configuration
   end
 
   def convert(hash)
-    config_hash = ConfigHash[hash]
-    config_hash.__config = self
-
-    config_hash
+    ConfigHash.convert(hash, self)
   end
 
   def load
