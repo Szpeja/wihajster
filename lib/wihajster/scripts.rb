@@ -13,6 +13,10 @@ class Wihajster::Scripts
       File.join(Wihajster.working_dir, profile)
   end
 
+  def scripts
+    Dir.glob(File.join(scripts_path, "*.rb"))
+  end
+
   def add_handler(event_module)
     ui.log :scripts, :added_handler, event_module.to_s
     runner.extend(event_module)
@@ -32,7 +36,7 @@ class Wihajster::Scripts
   def load_scripts
     ui.log :scripts, :loading, "Loading scripts at #{scripts_path}"
 
-    Dir.glob(File.join(scripts_path, "*.rb")) do |script|
+    scripts.each do |script|
       load_script(script)
     end
   end

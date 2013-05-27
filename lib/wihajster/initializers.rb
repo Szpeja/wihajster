@@ -57,9 +57,11 @@ module Wihajster::Initializers
     end
   end
 
-  def initialize_scripts(profile="", monitor=:monitor)
+  def initialize_scripts(monitor=:monitor)
     scripts.load_scripts
     scripts.monitor if monitor
+
+    scripts.scripts
   end
 
   protected

@@ -6,10 +6,10 @@ class Wihajster::App
   include Wihajster::Reloader
 
   def console(profile="")
-    Wihajster.profile = profile
+    use_profile profile
     prepare()
 
-    initialize_scripts(profile, config.scripts.monitor)
+    initialize_scripts(config.scripts.monitor)
 
     event_loop.run!(:in_background) if rubygame_ready?
 
@@ -17,16 +17,16 @@ class Wihajster::App
   end
 
   def run(profile="")
-    Wihajster.profile = profile
+    use_profile profile
     prepare()
 
-    initialize_scripts(profile, config.scripts.monitor)
+    initialize_scripts(config.scripts.monitor)
 
     event_loop.run!
   end
 
   def joystick_calibration(profile="")
-    Wihajster.profile = profile
+    use_profile profile
     prepare()
 
     require 'wihajster/joystick/calibration'
@@ -36,7 +36,7 @@ class Wihajster::App
   end
 
   def events_test
-    Wihajster.profile = "events_test"
+    use_profile "events_test"
     prepare()
 
     require 'wihajster/runner/events_test'
@@ -46,11 +46,11 @@ class Wihajster::App
   end
 
   def test_run(profile="")
-    Wihajster.profile = profile
+    use_profile profile
     config.joystick.__hash[:id] = 0
     prepare
 
-    initialize_scripts(profile, false)
+    initialize_scripts(false)
 
     Thread.new do
       sleep 0.5
@@ -61,7 +61,7 @@ class Wihajster::App
   end
 
   def generate
-    # Use thor to generate - allows overriding etc.
+    # use_profile thor to generate - allows overriding etc.
     FileUtils.mkdir_p "log"
     Dir.glob(File.join(Wihajster.root, "examples", "*")) do |example|
       FileUtils.cp example, Dir.pwd
@@ -70,11 +70,17 @@ class Wihajster::App
 
   protected
 
+  def use_profile(profile)
+    Wihajster.profile = profile
+  end
+
   def prepare
     enable_reloading # if config.reload_wihajster ?
 
     initialize_rubygame
     initialize_joystick(config.joystick.id)
     initialize_printer(config.printer.device, config.printer.speed)
+
+    self
   end
 end

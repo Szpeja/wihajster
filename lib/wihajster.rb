@@ -108,6 +108,8 @@ module Wihajster
       end
       raise exceptions.values.first
     end
+
+    to_load
   end
 end
 

@@ -36,11 +36,15 @@ group :development do
   gem "libnotify"   # Notfication
 end
 
+group :test do
+  gem "wrong", '~> 0.7.0'       # Testing library
+end
+
 group :web do
   gem "rack", "~>1.1"
 end
 
 group :experiments do
-  gem "ruby2c", :path => "vendor/ruby_to_c", :require => false
-  gem "ffi-tcc", :path => "vendor/ffi-tcc"
+  # gem "ruby2c", :path => "vendor/ruby_to_c", :require => false
+  # gem "ffi-tcc", :path => "vendor/ffi-tcc"
 end
