@@ -22,10 +22,10 @@ class Wihajster::Runner
     Wihajster.runner
   end
 
-  def initialize
+  def self.stop_on_interrupt
     Kernel.trap(:INT) do
       Wihajster.ui.log :signal, :interrupt, "Received INT. Stopping event loop"
-      Wihajster.event_loop.stop!
+      Wihajster.event_loop.stop
     end
   end
 

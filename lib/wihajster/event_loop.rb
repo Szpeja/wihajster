@@ -6,11 +6,11 @@ class Wihajster::EventLoop
 
   def initialize
     @keep_running = true
-    @stop = false
+    @running = false
   end
 
   def running?
-    @running && @keep_running && !@stop
+    @running && @keep_running
   end
 
   def setup_rubygame
@@ -47,7 +47,7 @@ class Wihajster::EventLoop
       begin
         tick_event = @clock.tick
 
-        return if @stop
+        break unless @keep_running
 
         @event_queue.each do |event|
           runner.process_event(event)
@@ -69,7 +69,8 @@ class Wihajster::EventLoop
   def run!(non_block = false)
     ui.log :event_loop, :running, "Running event loop"
 
-    @runner_thread = Thread.new do
+    @runner_thread = Util::VerboseThread.new "Event Loop" do
+      @keep_running = true
       run_event_loop
     end
     @runner_thread.join unless non_block

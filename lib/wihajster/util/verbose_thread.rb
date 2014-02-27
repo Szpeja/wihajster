@@ -1,5 +1,3 @@
-# Thread.abort_on_exception = true
-
 class Wihajster::Util::VerboseThread < ::Thread
   def self.exclusive(comment, &block)
     Wihajster.ui.log(:thread, :exclusive, :entering, comment)

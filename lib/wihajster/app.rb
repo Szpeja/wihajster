@@ -22,6 +22,7 @@ class Wihajster::App
 
     initialize_scripts(config.scripts.monitor)
 
+    Runner.stop_on_interrupt
     event_loop.run!
   end
 
@@ -42,6 +43,7 @@ class Wihajster::App
     require 'wihajster/runner/events_test'
     Wihajster.add Wihajster::Runner::EventsTest
 
+    Runner.stop_on_interrupt
     event_loop.run!
   end
 

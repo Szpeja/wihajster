@@ -5,7 +5,7 @@ module Wihajster::Util::PryConsole
     while @rerun
       @rerun = false
 
-      @pry_thread = Util::VerboseThread("Pry").new{ Wihajster.runner.pry }
+      @pry_thread = Wihajster::Util::VerboseThread.new("Pry"){ Wihajster.runner.pry }
       @pry_thread.join unless background
     end
   end
