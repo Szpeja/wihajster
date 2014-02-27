@@ -41,3 +41,15 @@ namespace :gcode do
     Wihajster::GCode::Commands.generate_help
   end
 end
+
+namespace :install do
+  desc "Install prerequisites on Debian"
+  task :debian do
+    `apt-get install libsdl1.2-dev libsdl-gfx1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev`
+  end
+end
+
+task :test do
+  require_relative 'test/smoke.rb'
+end
+
