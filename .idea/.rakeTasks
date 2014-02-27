@@ -4,4 +4,4 @@ You are allowed to:
 1. Remove rake task
 2. Add existing rake tasks
 To add existing rake tasks automatically delete this file and reload the project.
---><RakeGroup description="" fullCmd="" taksId="rake" /></Settings>
+--><RakeGroup description="" fullCmd="" taksId="rake"><RakeGroup description="" fullCmd="" taksId="gcode"><RakeTask description="Generate .html documentation file based on yaml" fullCmd="gcode:doc" taksId="doc" /><RakeTask description="Generate .yaml file based on wiki" fullCmd="gcode:wiki_to_yaml" taksId="wiki_to_yaml" /></RakeGroup><RakeGroup description="" fullCmd="" taksId="install"><RakeTask description="Install prerequisites on Debian" fullCmd="install:debian" taksId="debian" /></RakeGroup><RakeTask description="Generate YARD Documentation" fullCmd="yard" taksId="yard" /><RakeTask description="" fullCmd="test" taksId="test" /></RakeGroup></Settings>
