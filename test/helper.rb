@@ -19,5 +19,5 @@ end
 
 Wrong.config.color
 
-require_relative 'helpers/ui'
-Wihajster.ui = Wihajster::TestUi.new
+require 'wihajster/ui/headless'
+Wihajster.ui = Wihajster::Ui::Headless.new

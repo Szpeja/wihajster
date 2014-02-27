@@ -2,13 +2,34 @@ require 'forwardable'
 require 'highline'
 
 class Wihajster::Ui::Console
-  extend Forwardable
-  def_delegators :highline, :agree, :ask, :say
+  def initialize(s_out = $stdout, s_in = $stdin)
+    @in = s_in
+    @out = s_out
+  end
 
-  attr_accessor :highline
+  def say(msg)
+    @out.puts(msg)
+  end
 
-  def initialize
-    @highline = ::HighLine.new
+  def ask(question, responses=nil)
+    while true
+      @out.print("#{question} ")
+      @out.flush if @out.respond_to? :flush
+
+      result = @in.gets
+      break if result.nil?
+      result = result.strip
+      break if responses.nil? || responses.include?(result)
+    end
+
+    result
+  end
+
+  def agree(to, default=true)
+    options = default ? "(Yes/no)" : "(No/yes)"
+    result = ask("#{to} #{options}")
+
+    (result.downcase == "y") || (result.downcase == "yes") || (result == "" && default)
   end
 
   def choose(question, choices)
@@ -33,7 +54,7 @@ class Wihajster::Ui::Console
         responses[k.to_s] = v
         say "#{k}. #{v}"
       end
-      r = ask(question){|q| q.in = responses.keys }
+      r = ask(question, responses.keys)
 
       responses[r]
     end
