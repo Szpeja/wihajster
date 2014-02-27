@@ -7,11 +7,11 @@ module Wihajster::Runner::DefaultHandlers
   def process_event(event)
     case event
     when Interrupt, Rubygame::Events::QuitRequested
-      exit
+      Kernel.exit
     when Rubygame::KeyDownEvent
       case event.key
       when Rubygame::K_ESCAPE
-        exit
+        Kernel.exit
       end
     end
   rescue => e

@@ -41,7 +41,7 @@ class Wihajster::Scripts
   end
 
   def reload_scripts!
-    Thread.exclusive do
+    Util::VerboseThread.exclusive("reload_scripts!") do
       Runner.reset
       load_scripts
     end
@@ -63,6 +63,6 @@ class Wihajster::Scripts
     end 
 
     ui.log :scripts, :monitoring, "Started monitoring #{scripts_path}"
-    Listen.to(scripts_path, :filter => /\.rb$/).change(&callback).start(false)
+    Listen.to(scripts_path, only: /\.rb$/, &callback).start
   end
 end

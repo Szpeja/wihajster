@@ -22,7 +22,7 @@ class Wihajster::Runner
     Wihajster.runner
   end
 
-  trap("SIGINT") do
+  Kernel.trap(:INT) do
     Wihajster.runner.process_event(Interrupt.new)
   end
 

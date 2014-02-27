@@ -251,7 +251,7 @@ class Wihajster::Printer < Monitor
   end
 
   def communication_thread
-    @communication_thread ||= Thread.new{ communication_loop }
+    @communication_thread ||= Util::VerboseThread.new("Communication Loop"){ communication_loop }
   end
 
   def status

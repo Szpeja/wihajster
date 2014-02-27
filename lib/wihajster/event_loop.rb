@@ -6,6 +6,7 @@ class Wihajster::EventLoop
 
   def initialize
     @keep_running = true
+    @stop = false
   end
 
   def running?
@@ -41,6 +42,7 @@ class Wihajster::EventLoop
   def run_event_loop
     @running = true
 
+    Wihajster.ui.log :event_loop, :start, "Started Event Loop"
     while @keep_running
       begin
         tick_event = @clock.tick
@@ -56,6 +58,7 @@ class Wihajster::EventLoop
         runner.process_event(e)
       end
     end
+    Wihajster.ui.log :event_loop, :finished, "Finished Event Loop"
   rescue => e
     Wihajster.ui.exception(e, "in event queue!")
     raise(e)
@@ -74,11 +77,13 @@ class Wihajster::EventLoop
     @runner_thread
   end
 
-  def stop
+  # walling with *and_wait* leads to a nasty lock issue that will hang process
+  # if called from the main thread (eg. in trap code)
+  def stop(and_wait=false)
     ui.log :event_loop, :stopping, "Stopping event loop"
 
     @keep_running = false
-    @runner_thread.join
+    @runner_thread.join if and_wait
   end
 
   def stop!

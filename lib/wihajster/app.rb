@@ -52,8 +52,8 @@ class Wihajster::App
 
     initialize_scripts(false)
 
-    Thread.new do
-      sleep 0.5
+    Util::VerboseThread.new "Event loop stopper" do
+      sleep 1
       event_loop.stop
     end
 
@@ -61,7 +61,7 @@ class Wihajster::App
   end
 
   def generate
-    # use_profile thor to generate - allows overriding etc.
+    # use thor to generate - allows overriding etc.
     FileUtils.mkdir_p "log"
     Dir.glob(File.join(Wihajster.root, "examples", "*")) do |example|
       FileUtils.cp example, Dir.pwd

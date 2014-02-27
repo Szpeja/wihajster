@@ -10,11 +10,13 @@ module Wihajster::Util::Reloader
 
     path = File.join(Wihajster.root, 'lib')
     puts "Started monitoring #{path}"
-    Listen.to(path, :filter => /\.rb$/).change(&callback).start(false)
+    Listen.to(path, only: /\.rb$/, &callback).start
   end
 
   def preload(file)
+    $stdout.print "Loading #{file} ..."; $stdout.flush if $stdout.respond_to?(:flush)
     load(file)
+    puts "Done."
   rescue => e
     puts "Failed loading of #{file}."
     puts "#{e.class}: #{e}"
@@ -22,7 +24,9 @@ module Wihajster::Util::Reloader
   end
 
   def reload(file)
+    $stdout.print "Reoading #{file} ..."; $stdout.flush if $stdout.respond_to?(:flush)
     load(file)
+    puts "Done."
   rescue => e
     puts "Failed reloading of #{file}."
     puts "#{e.class}: #{e}"

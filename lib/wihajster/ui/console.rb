@@ -75,4 +75,9 @@ class Wihajster::Ui::Console
   def event(ev)
     say "Event: #{ev.name} #{ev.attributes.inspect}"
   end
+
+  def say_at(message, x, y)
+    escCode = 0x1B
+    @out.puts "%c[%d;%df%s" % [escCode, y, x, message]
+  end
 end

@@ -23,8 +23,7 @@ util_gem "yard"                 # Documentation generator.
 util_gem "redcarpet"            # Markdown formatting for documentation
 
 group :development do
-  # Use git version till https://github.com/pry/pry/issues/872 is not fixed in released gem.
-  gem "pry", :git => "git://github.com/pry/pry.git"
+  gem "pry"
 
   # File system monitoring on:
   linux_gem 'rb-inotify', '~> 0.9'

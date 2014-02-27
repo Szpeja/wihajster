@@ -100,7 +100,7 @@ module Wihajster::GCode
         "Unrecognized option #{k} for #{c.code} - #{c.method_name}"
     end
 
-    arguments = Wihajster::GCode::Commands.parameters.
+    arguments = self.class.parameters.
       select{|name, desc| params[name]}.
       map{|a, d| "#{a}#{params[a]}" } 
 
