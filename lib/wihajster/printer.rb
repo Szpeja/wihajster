@@ -104,9 +104,9 @@ class Wihajster::Printer < Monitor
   # Alternative reset. TODO: check which one works :D
   def reset_reprap
     @sp.dtr = 1
-    sleep(0.2);
+    sleep(0.2)
     @sp.dtr = 0
-    sleep(0.3);
+    sleep(0.3)
   end
 
   def hard_reset!
@@ -169,7 +169,7 @@ class Wihajster::Printer < Monitor
   end
 
   # Returns line without trailing spaces or nil if there's nothing to read(in non-blocking mode).
-  # If blocking mode is set this call will wait indefinetelly for response.
+  # If blocking mode is set this call will wait indefinitely for response.
   def readline
     @sp.readline.strip
   rescue EOFError

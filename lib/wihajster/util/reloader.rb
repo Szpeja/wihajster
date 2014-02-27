@@ -1,4 +1,4 @@
-module Wihajster::Reloader
+module Wihajster::Util::Reloader
   def enable_reloading
     return unless Wihajster.env == :development
 

@@ -3,7 +3,7 @@ class Wihajster::App
 
   include Wihajster
   include Wihajster::Initializers
-  include Wihajster::Reloader
+  include Wihajster::Util::Reloader
 
   def console(profile="")
     use_profile profile
@@ -13,7 +13,7 @@ class Wihajster::App
 
     event_loop.run!(:in_background) if rubygame_ready?
 
-    Wihajster::PryConsole.start
+    Wihajster::Util::PryConsole.start
   end
 
   def run(profile="")

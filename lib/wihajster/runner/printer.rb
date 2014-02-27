@@ -1,4 +1,10 @@
 module Wihajster::Runner::Printer
+  PRINTER_METHODS = [
+    :disconnect, :connected?, :can_write?,
+    :state, :status, :reset!, :hard_reset!,
+    :send_gcode, :send_to_printer,
+  ]
+
   def devices
     Printer.devices
   end
@@ -16,20 +22,40 @@ module Wihajster::Runner::Printer
     Wihajster.printer = Printer.new(dev, options)
   end
 
-  delegate :disconnect, :connected?, :can_write?,
-    :state, :status, :reset!, :hard_reset!,
-    :send_gcode, :send_to_printer,
-    :to => :printer, :allow_nil => true
-
+  # Implements the Wihajster::GCode#write_command
+  #
+  # All gcode methods will use this method to write data to connected printer
   def write_command(gcode_command)
+    super
     send_gcode(gcode_command)
   end
 
   def direct_mode!
-    printer.direct_mode = true
+    with_printer do
+      printer.direct_mode = true
+    end
   end
 
   def queued_mode!
-    printer.direct_mode = false
+    with_printer do
+      printer.direct_mode = false
+    end
+  end
+
+  PRINTER_METHODS.each do |m|
+    define_method(m) do
+      with_printer{ printer.send(m) }
+    end
+  end
+
+  protected
+
+  def with_printer
+    if printer
+      yield
+    else
+      Wihajster.ui.say("Printer is not connected. Use _connect_ method to connect to printer.")
+      nil
+    end
   end
 end

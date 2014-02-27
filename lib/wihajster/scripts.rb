@@ -9,8 +9,7 @@ class Wihajster::Scripts
 
   attr_writer :scripts_path
   def scripts_path
-    @scripts_path ||= 
-      File.join(Wihajster.working_dir, profile)
+    @scripts_path ||= File.join(Wihajster.working_dir, profile)
   end
 
   def scripts

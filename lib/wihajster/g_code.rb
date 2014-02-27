@@ -46,18 +46,18 @@ require 'ostruct'
 module Wihajster::GCode
   class << self
     def parameters
-    {
-      S: "Power parameter, such as the voltage to send to a motor",
-      P: "Time  parameter, such as a time in millimetersseconds",
-      R: "Temperature Parameter - used for temperatures in Celcius degrees",
-      
-      X: "A X coordinate, usually to move to",
-      Y: "A Y coordinate, usually to move to",
-      Z: "A Z coordinate, usually to move to",
-      E: "Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.",
+      {
+        S: 'Power parameter, such as the voltage to send to a motor',
+        P: 'Time  parameter, such as a time in millimetersseconds',
+        R: 'Temperature Parameter - used for temperatures in Celcius degrees',
 
-      F: "Format Feedrate in mm per minute. (Speed of print head movement)",
-    }
+        X: 'A X coordinate, usually to move to',
+        Y: 'A Y coordinate, usually to move to',
+        Z: 'A Z coordinate, usually to move to',
+        E: 'Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.',
+
+        F: 'Format Feedrate in mm per minute. (Speed of print head movement)',
+      }
     end
 
     # Loads list of commands from YAML reference.
@@ -108,7 +108,7 @@ module Wihajster::GCode
   end
 
   # Writes a gcode to output device.
-  # This method should be overriden in class that includes this module.
+  # This method should be overridden in class that includes this module.
   def write_command(formated_command)
     Wihajster.ui.log(:gcode, :write, formated_command)
   end

@@ -59,7 +59,7 @@ module Wihajster
     end
 
     def configuration
-      @configuration ||= Configuration.new(profile)
+      @configuration ||= Util::Configuration.new(profile)
     end
 
     def config

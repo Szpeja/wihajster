@@ -1,8 +1,8 @@
 module Wihajster::Runner::DefaultHandlers
   # Process event from Rubygame.
   #
-  # Does basic event processing - handles only quititng from application.
-  # Should be overriden by other handlers.
+  # Does basic event processing - handles only quitting from application.
+  # Should be overridden by other handlers.
   #
   def process_event(event)
     case event

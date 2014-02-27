@@ -5,19 +5,19 @@ class Wihajster::Runner
 
   include Wihajster
 
+  include Wihajster::GCode
   include Wihajster::Runner::DefaultHandlers
   include Wihajster::Runner::Printer
-  include Wihajster::GCode
+
   if Wihajster::App.instance.rubygame_ready?
+    # Wihajster::Joystick::Events are also included if rubygame loads.
     include Wihajster::Joystick::Events
   end
 
-  # Wihajster::Joystick::Events are also included if rubygame loads.
-
-  # Initializes a new runner. Stoping pry thread of previous runner.
+  # Initializes a new runner. Stopping pry thread of previous runner.
   def self.reset
     Wihajster.runner = new
-    PryConsole.reset
+    Util::PryConsole.reset
 
     Wihajster.runner
   end

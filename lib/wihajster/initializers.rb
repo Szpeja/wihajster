@@ -11,7 +11,7 @@ module Wihajster::Initializers
     end
     
     Rubygame::Events.constants.each do |name|
-      Rubygame::Events.const_get(name).send(:include, Wihajster::RubygameExtensions)
+      Rubygame::Events.const_get(name).send(:include, Wihajster::Util::RubygameExtensions)
     end
 
     event_loop.setup_rubygame

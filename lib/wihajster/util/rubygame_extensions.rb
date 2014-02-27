@@ -1,4 +1,4 @@
-module Wihajster::RubygameExtensions
+module Wihajster::Util::RubygameExtensions
   def name
     self.class.name.split("::").last.to_sym
   end

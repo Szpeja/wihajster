@@ -1,6 +1,6 @@
 require 'yaml'
 
-class Wihajster::Configuration
+class Wihajster::Util::Configuration
   attr_writer :config_name, :config_path
 
   class ConfigHash < BasicObject
