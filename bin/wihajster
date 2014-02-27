@@ -3,14 +3,6 @@
 require "rubygems"
 require "bundler"
 
-#def Kernel.trap(*args)
-#  p caller
-#end
-#
-#def Signal.trap(*args)
-#  p caller
-#end
-
 require File.expand_path '../../lib/wihajster', __FILE__
 
 unless File.exist?("Gemfile")

@@ -55,7 +55,7 @@ class Wihajster::EventLoop
 
         runner.process_event(tick_event)
       rescue Interrupt => e
-        runner.process_event(e)
+        @keep_running = false
       end
     end
     Wihajster.ui.log :event_loop, :finished, "Finished Event Loop"
