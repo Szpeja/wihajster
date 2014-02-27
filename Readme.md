@@ -1,6 +1,13 @@
-# Instalation 
+# Wihajseter
 
-## QT4
+Wihajster is a Ruby library for generating GCode and controlling the
+3D printer.
+
+## 
+
+## Instalation 
+
+### QT4
 
 Debian / Ubuntu / Mint + Ruby 1.9.3
 
@@ -27,18 +34,19 @@ cmake . && make && sudo make install
 sudo ldconfig
 ```
 
-## Instalation - SDL/Rubygame
+### Instalation - SDL/Rubygame
 
 `https://github.com/rubygame/rubygame/wiki/Install`
 
 For debian:
 
 ```
-sudo apt-get install ruby ruby-dev irb ri rubygems
+sudo apt-get install ruby ruby-dev irb ri rubygems # Ruby installation
+
 sudo apt-get install libsdl1.2-dev libsdl-gfx1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-ttf2.0-dev
 ```
 
-# Alternatives and Inspirations
+## Alternatives and Inspirations
 
 - https://github.com/D1plo1d/Replicate.rb/blob/master/ReprapDriver.rb
 - https://github.com/kliment/Printrun/blob/master/printcore.py
