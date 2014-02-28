@@ -2,6 +2,7 @@ class Wihajster::Scripts
   include Wihajster
 
   attr_accessor :profile
+  attr_reader :listener
 
   def initialize(profile=nil)
     @profile = profile || Wihajster.profile
@@ -63,6 +64,7 @@ class Wihajster::Scripts
     end 
 
     ui.log :scripts, :monitoring, "Started monitoring #{scripts_path}"
-    Listen.to(scripts_path, only: /\.rb$/, &callback).start
+    @listener = Listen.to(scripts_path, only: /\.rb$/, &callback)
+    @listener.start
   end
 end

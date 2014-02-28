@@ -56,7 +56,7 @@ module Wihajster::GCode
         Z: 'A Z coordinate, usually to move to',
         E: 'Length of extrudate in mm. This is exactly like X, Y and Z, but for the length of filament to extrude.',
 
-        F: 'Format Feedrate in mm per minute. (Speed of print head movement)',
+        F: 'Format Feed rate in mm per minute. (Speed of print head movement)',
       }
     end
 
@@ -100,7 +100,7 @@ module Wihajster::GCode
         "Unrecognized option #{k} for #{c.code} - #{c.method_name}"
     end
 
-    arguments = self.class.parameters.
+    arguments = Wihajster::GCode.parameters.
       select{|name, desc| params[name]}.
       map{|a, d| "#{a}#{params[a]}" } 
 

@@ -1,4 +1,7 @@
+# TODO: fix logging
 module Wihajster::Util::Reloader
+  attr_reader :listener
+
   def enable_reloading
     return unless Wihajster.env == :development
 
@@ -9,8 +12,9 @@ module Wihajster::Util::Reloader
     end 
 
     path = File.join(Wihajster.root, 'lib')
-    puts "Started monitoring #{path}"
-    Listen.to(path, only: /\.rb$/, &callback).start
+    ui.log :initializer, :reloader, "Started monitoring #{path}"
+    @listener = Listen.to(path, only: /\.rb$/, &callback)
+    @listener.start
   end
 
   def preload(file)

@@ -1,7 +1,7 @@
 class Wihajster::Util::VerboseThread < ::Thread
   def self.exclusive(comment, &block)
     Wihajster.ui.log(:thread, :exclusive, :entering, comment)
-    super
+    super(&block)
     Wihajster.ui.log(:thread, :exclusive, :leaving, comment)
   end
 

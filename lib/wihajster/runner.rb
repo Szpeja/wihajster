@@ -7,7 +7,7 @@ class Wihajster::Runner
 
   include Wihajster::GCode
   include Wihajster::Runner::DefaultHandlers
-  include Wihajster::Runner::Printer
+  include Wihajster::Runner::PrinterCommands
 
   if Wihajster::App.instance.rubygame_ready?
     # Wihajster::Joystick::Events are also included if rubygame loads.

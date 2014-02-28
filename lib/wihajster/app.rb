@@ -14,6 +14,8 @@ class Wihajster::App
     event_loop.run!(:in_background) if rubygame_ready?
 
     Wihajster::Util::PryConsole.start
+
+    finalize()
   end
 
   def run(profile="")
@@ -24,6 +26,8 @@ class Wihajster::App
 
     Runner.stop_on_interrupt
     event_loop.run!
+
+    finalize()
   end
 
   def joystick_calibration(profile="")
@@ -34,6 +38,8 @@ class Wihajster::App
     Wihajster.add Wihajster::Joystick::Calibration
 
     event_loop.run!
+
+    finalize()
   end
 
   def events_test
@@ -45,6 +51,8 @@ class Wihajster::App
 
     Runner.stop_on_interrupt
     event_loop.run!
+
+    finalize()
   end
 
   def test_run(profile="")
@@ -84,5 +92,15 @@ class Wihajster::App
     initialize_printer(config.printer.device, config.printer.speed)
 
     self
+  end
+
+  def finalize
+    Wihajster.ui.log :finalize, :event_loop, "Stopping"
+    Wihajster.event_loop.stop
+
+    Wihajster.ui.log :finalize, :scripts, :reloader, "Stopping Listen"
+    Listen.stop
+
+    Wihajster.event_loop.runner_thread.join
   end
 end

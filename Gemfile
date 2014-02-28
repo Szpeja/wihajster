@@ -24,6 +24,7 @@ util_gem "redcarpet"            # Markdown formatting for documentation
 
 group :development do
   gem "pry"
+  gem "listen"
 
   # File system monitoring on:
   linux_gem 'rb-inotify', '~> 0.9'
