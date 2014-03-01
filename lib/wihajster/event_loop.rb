@@ -8,6 +8,7 @@ class Wihajster::EventLoop
     def initialize(framerate = 25)
       @frame_rate = framerate
       @frame_time = 1.0 / @frame_rate
+      @elapsed = 0.001
     end
 
     def tick
@@ -29,6 +30,10 @@ class Wihajster::EventLoop
 
     def seconds
       @elapsed.floor.to_i
+    end
+
+    def name
+      :ClockTicked
     end
   end
 

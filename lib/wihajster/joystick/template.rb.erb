@@ -1,7 +1,7 @@
 # encoding: utf-8
 module JoystickEvents
   include Wihajster
-  include Wihajster::GCode::Commands
+  include Wihajster::Runner::JoystickEvents
 
   # Called each time module is loaded.
   def self.extended(base)

@@ -36,8 +36,7 @@ class Wihajster::App
     use_profile profile
     prepare()
 
-    require 'wihajster/joystick/calibration'
-    Wihajster.add Wihajster::Joystick::Calibration
+    Wihajster.add Wihajster::Runner::JoystickCalibration
 
     event_loop.run!
 
@@ -48,7 +47,6 @@ class Wihajster::App
     use_profile "events_test"
     prepare()
 
-    require 'wihajster/runner/events_test'
     Wihajster.add Wihajster::Runner::EventsTest
 
     Runner.stop_on_interrupt

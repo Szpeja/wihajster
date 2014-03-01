@@ -1,5 +1,3 @@
-require 'wihajster/joystick/events'
-
 class Wihajster::Runner
   Wihajster.load_libraries "runner"
 
