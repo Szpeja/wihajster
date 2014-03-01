@@ -10,7 +10,7 @@ module Wihajster::Runner::PrinterCommands
   end
 
   def connect(device=nil, options={})
-    unless devices.present?
+    if devices.empty?
       ui.say "There's no printer connected"
       return
     end

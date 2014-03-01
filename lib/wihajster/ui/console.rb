@@ -1,6 +1,3 @@
-require 'forwardable'
-require 'highline'
-
 class Wihajster::Ui::Console
   def initialize(s_out = $stdout, s_in = $stdin)
     @in = s_in
@@ -77,7 +74,7 @@ class Wihajster::Ui::Console
   end
 
   def say_at(message, x, y)
-    escCode = 0x1B
-    @out.puts "%c[%d;%df%s" % [escCode, y, x, message]
+    esc_code = 0x1B
+    @out.puts "%c[%d;%df%s" % [esc_code, y, x, message]
   end
 end

@@ -1,12 +1,11 @@
 module Wihajster::Util::PryConsole
-  def self.start(background = false)
+  def self.start
     @rerun = true
-    
+    @pry = Pry.new
+
     while @rerun
       @rerun = false
-
-      @pry_thread = Wihajster::Util::VerboseThread.new("Pry"){ Wihajster.runner.pry }
-      @pry_thread.join unless background
+      @pry.repl(Wihajster.runner)
     end
   end
 
@@ -19,6 +18,6 @@ module Wihajster::Util::PryConsole
   end
 
   def self.stop
-    @pry_thread.terminate
+    @pry.run_command("exit")
   end
 end

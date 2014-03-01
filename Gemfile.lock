@@ -24,7 +24,6 @@ GEM
       thor (>= 0.18.1)
     guard-shell (0.6.1)
       guard (>= 1.1.0)
-    highline (1.6.20)
     libnotify (0.8.2)
       ffi (>= 1.0.11)
     listen (2.6.2)
@@ -55,7 +54,6 @@ GEM
     redcarpet (3.1.1)
     ruby-sdl-ffi (0.4)
       nice-ffi (>= 0.2)
-    ruby-units (1.4.5)
     ruby2ruby (2.0.7)
       ruby_parser (~> 3.1)
       sexp_processor (~> 4.0)
@@ -85,7 +83,6 @@ DEPENDENCIES
   ffi-opengl!
   guard
   guard-shell
-  highline
   libnotify
   listen
   nokogiri
@@ -96,7 +93,6 @@ DEPENDENCIES
   rb-fsevent
   rb-inotify (~> 0.9)
   redcarpet
-  ruby-units
   rubygame
   serialport (~> 1.1)
   wrong (~> 0.7.0)

@@ -11,8 +11,7 @@ gem "ffi",        "~> 1.1"      # Foreign Function Interface
 gem "nokogiri"                  # XML Parsing.
 
 gem "serialport", "~> 1.1"      # Communication with serial port.
-gem "ruby-units"                # Unit conversion. Quantity is possible alternative (more rubish).
-gem "highline"                  # Command line support
+# gem "ruby-units"                # Unit conversion. Quantity is possible alternative (more rubish). Conflicts with Pry
 
 util_gem "rubygame"             # For Joystick control
 
