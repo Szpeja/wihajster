@@ -4,6 +4,7 @@ module Wihajster::Util::Reloader
 
   def enable_reloading
     return unless Wihajster.env == :development
+    return unless defined?(Listen)
 
     callback = lambda do |modified, added, removed|
       modified.each{|path| reload(path) }

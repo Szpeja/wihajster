@@ -49,6 +49,8 @@ class Wihajster::Scripts
   end
 
   def monitor
+    return unless defined?(Listen)
+
     callback = lambda do |modified, added, removed|
       begin
         if removed.any?

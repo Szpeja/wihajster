@@ -30,8 +30,8 @@ group :development do
   osx_gem   'rb-fsevent'
   win_gem   'rb-fchange'
 
-  gem "guard"       # Monitoring changes to application files.
-  gem "guard-shell" 
+  # gem "guard"       # Monitoring changes to application files.
+  # gem "guard-shell" 
   gem "libnotify"   # Notfication
 end
 

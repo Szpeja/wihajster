@@ -4,6 +4,34 @@ class Wihajster::EventLoop
   attr_accessor :keep_running, :runner_thread
   attr_reader :event_queue, :clock
 
+  class Clock
+    def initialize(framerate = 25)
+      @frame_rate = framerate
+      @frame_time = 1.0 / @frame_rate
+    end
+
+    def tick
+      @last_tick ||= Time.now
+      if (wait = @last_tick + @frame_time - Time.now) > 0
+        sleep wait
+      end
+
+      tick = Time.now
+      @elapsed = tick - @last_tick
+      @last_tick = tick
+
+      self
+    end
+
+    def milliseconds
+      (@elapsed * 1000).to_i
+    end
+
+    def seconds
+      @elapsed.floor.to_i
+    end
+  end
+
   def initialize
     @keep_running = true
     @running = false
@@ -17,17 +45,24 @@ class Wihajster::EventLoop
     @event_queue = Rubygame::EventQueue.new
     @event_queue.enable_new_style_events
 
+    @clock = Clock.new(25)
+  end
+
+  # More precise but seems to cause a major lag in pry, and blocks ruby threads.
+  def rubygame_clock
     @clock = Rubygame::Clock.new
     @clock.target_framerate = 10
+    @clock.nice = true
+    @clock.granularity = 0
 
     # Adjust the assumed granularity to match the system.
     # This helps minimize CPU usage on systems with clocks
     # that are more accurate than the default granularity.
-    
+
     ui.log :initializer, "Calibrating clock"
 
     @clock.calibrate
-    
+
     # Make Clock#tick return a ClockTicked event.
     @clock.enable_tick_events
   end

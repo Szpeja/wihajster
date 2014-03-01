@@ -2,6 +2,7 @@ require 'thread'
 require 'monitor'
 
 class Wihajster::Printer < Monitor
+  CURRENT_LINE_CODE = 'M110'
   include Wihajster
 
   attr_reader :device, :speed, :sp
@@ -126,7 +127,7 @@ class Wihajster::Printer < Monitor
     @line_nr = 0
     @can_send = 1
 
-    send_gcode('M101')
+    send_gcode(CURRENT_LINE_CODE)
   end
 
   # Sends _raw_ line (from .gcode file) that MIGHT include gcode.
@@ -139,7 +140,7 @@ class Wihajster::Printer < Monitor
       next unless command
       command = command[1].upcase.to_sym
 
-      if command == "M110"
+      if command == CURRENT_LINE_CODE
         reset!
       else
         send_gcode(command)
@@ -206,12 +207,15 @@ class Wihajster::Printer < Monitor
     while connected? && line = readline
       ui.log :printer, :received, line
 
+      line.downcase!
       if line.starts_with?(*greetings)
         @can_send = 1
       elsif line.starts_with?("ok")
         # TODO: Implement Q: parameter from 
         # http://reprap.org/wiki/GCODE_buffer_multiline_proposal
         @can_send = 1
+      # eg: Error:Line Number is not Last Line Number+1, Last Line:15
+      # Resend:16
       elsif line.starts_with?("rs", "resend")
         # TODO: extract line number from response.
         line = @lines.length - 1 # Last command. 

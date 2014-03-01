@@ -24,7 +24,10 @@ module Wihajster::Runner::PrinterCommands
         ui.choose('Which printer would you like to use?', devices)
       end
 
-    Wihajster.printer = Wihajster::Printer.new(dev, options) if dev
+    if dev
+      Wihajster.printer = Wihajster::Printer.new(dev, options)
+      printer.connect
+    end
   end
 
   # Implements the Wihajster::GCode#write_command
