@@ -34,7 +34,7 @@ module Wihajster::Runner::PrinterCommands
   #
   # All gcode methods will use this method to write data to connected printer
   def write_command(gcode_command)
-    super
+    Wihajster.ui.log(:gcode, :write, gcode_command)
     send_gcode(gcode_command)
   end
 

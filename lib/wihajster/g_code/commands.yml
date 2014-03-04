@@ -68,21 +68,21 @@
   :supported: true
 - :code: G29
   :name: Detailed Z-Probe
-  :example: 
+  :example:
   :method_name: detailed_z_probe
   :description: probes the bed at 3 points.
   :accepts: []
   :supported: true
 - :code: G30
   :name: Single Z Probe
-  :example: 
+  :example:
   :method_name: single_z_probe
   :description: probes bed at current XY location.
   :accepts: []
   :supported: true
 - :code: G31
   :name: Report Current Probe status
-  :example: 
+  :example:
   :method_name: report_current_probe_status
   :description: reports whether Z probe is triggered.
   :accepts:
@@ -90,7 +90,7 @@
   :supported: true
 - :code: G32
   :name: Probe Z and calibrate with FPU
-  :example: 
+  :example:
   :method_name: probe_z_and_calibrate_with_fpu
   :description: probes the bed at 3 points and updates transformation matrix for bed
     leveling compensation.
@@ -406,7 +406,7 @@
   :supported: true
 - :code: M40
   :name: Eject
-  :example: 
+  :example:
   :method_name: eject
   :description: ! 'If your RepRap machine can eject the parts it has built off the
     bed, this command executes the eject cycle.  This usually involves cooling the
@@ -424,7 +424,7 @@
   :name: Loop
   :example: M41
   :method_name: loop
-  :description: ! '
+  :description: ! "
 
     If the RepRap machine was building a file from its own memory such as a local
     SD card (as opposed to a file being transmitted to it from a host computer) this
@@ -432,18 +432,15 @@
     your RepRap is capable of ejecting parts from its build bed then you can set it
     printing in a loop and it will run and run.  Use with caution - the only things
     that will stop it are:
-
+    \n
     # When you press the reset button,
-
     # When the build material runs out (if your RepRap is set up to detect this),
-    and
-
-    # When there''s an error (such as a heater failure).'
+    # When there''s an error (such as a heater failure).|"
   :accepts: []
   :supported: true
 - :code: M42
   :name: Stop on material exhausted / Switch I/O pin
-  :example: 
+  :example:
   :method_name: stop_on_material_exhausted_switch_i_o_pin
   :description: ''
   :accepts: []
@@ -605,7 +602,7 @@
   :supported: true
 - :code: M107
   :name: Fan Off
-  :example: 
+  :example:
   :method_name: fan_off
   :description: Deprecated. Use M106 S0 instead.
   :accepts:
@@ -613,7 +610,7 @@
   :supported: true
 - :code: M108
   :name: Set Extruder Speed
-  :example: 
+  :example:
   :method_name: set_extruder_speed
   :description: ! 'Sets speed of extruder motor.
 
@@ -622,7 +619,7 @@
   :supported: true
 - :code: M109
   :name: Set Extruder Temperature and Wait
-  :example: 
+  :example:
   :method_name: set_extruder_temperature_and_wait
   :description: ''
   :accepts: []
@@ -636,7 +633,7 @@
     Set the current line number to 123.  Thus the expected next line after this command
     will be 124.
 
-    <br style="clear: both" />'
+    '
   :accepts: []
   :supported: true
 - :code: M111
@@ -823,9 +820,9 @@
   :name: Set PID P value
   :example: ! 'M130 P 0 S 8.0  '
   :method_name: set_pid_p_value
-  :description: ! '#  Sets heater 0 P factor to 8.0
+  :description: ! 'Sets heater 0 P factor to 8.0
 
-    <br style="clear: both" />'
+    '
   :accepts:
   - :P
   - :S
@@ -834,9 +831,9 @@
   :name: Set PID I value
   :example: ! 'M130 P 1 S 0.5  '
   :method_name: set_pid_i_value
-  :description: ! '#  Sets heater 1 I factor to 0.5
+  :description: ! 'Sets heater 1 I factor to 0.5
 
-    <br style="clear: both" />'
+    '
   :accepts:
   - :P
   - :S
@@ -845,9 +842,9 @@
   :name: Set PID D value
   :example: ! 'M130 P 0 S 24  '
   :method_name: set_pid_d_value
-  :description: ! '#  Sets heater 0 D factor to 24.0
+  :description: ! 'Sets heater 0 D factor to 24.0
 
-    <br style="clear: both" />'
+    '
   :accepts:
   - :P
   - :S
@@ -856,9 +853,9 @@
   :name: Set PID I limit value
   :example: ! 'M130 P 1 S 264  '
   :method_name: set_pid_i_limit_value
-  :description: ! '#  Sets heater 0 I limit value to 264
+  :description: ! 'Sets heater 0 I limit value to 264
 
-    <br style="clear: both" />'
+    '
   :accepts:
   - :P
   - :S
@@ -869,16 +866,16 @@
   :method_name: write_pid_values_to_eeprom
   :description: ! '
 
-    <br style="clear: both" />'
+    '
   :accepts: []
   :supported: true
 - :code: M136
   :name: Print PID settings to host
   :example: ! 'M136 P1  '
   :method_name: print_pid_settings_to_host
-  :description: ! '# print heater 0 PID parameters to host
+  :description: ! 'print heater 0 PID parameters to host
 
-    <br style="clear: both" />'
+    '
   :accepts:
   - :P
   :supported: true
@@ -962,7 +959,7 @@
     This will wait until the bed temperature reaches 60 degrees, printing out the
     temperature of the hot end and the bed every second.
 
-    <br style="clear: both" />'
+    '
   :accepts:
   - :S
   :supported: true
@@ -1124,7 +1121,7 @@
 
     Echoing may be controlled in some firmwares with M111
 
-    <br style="clear: both" />'
+    '
   :accepts: []
   :supported: true
 - :code: M245
@@ -1202,10 +1199,10 @@
   :example: T1
   :method_name: select_tool
   :description: ! "\nSelect extruder number 1 to build with.  \nThe sequence followed
-    is:\n# Set the current extruder to its standby temperature specified by G10 (see
+    is:\n\n# Set the current extruder to its standby temperature specified by G10 (see
     above),\n# Set the new extruder to its operating temperature specified by G10
     and wait for '''all''' temperatures to stabilise,\n# Apply any X, Y, Z offset
-    for the new extruder specified by G10,\n# Use the new extruder.\nSelecting a non-existent
+    for the new extruder specified by G10,\n# Use the new extruder.\n\nSelecting a non-existent
     tool (100, say) just does Step 1. above.  That is to say it leaves all tools in
     their standby state.  You can, of course, use the G10 command beforehand to set
     that standby temperature to anything you like.\nNote that you may wish to move

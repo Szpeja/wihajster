@@ -3,7 +3,7 @@ class Wihajster::Runner
 
   include Wihajster
 
-  include Wihajster::GCode
+  include Wihajster::GCode::Commands
   include Wihajster::Runner::DefaultHandlers
   include Wihajster::Runner::PrinterCommands
 
