@@ -15,6 +15,7 @@ GEM
     coderay (1.1.0)
     diff-lcs (1.2.5)
     ffi (1.9.3)
+    github-markup (1.0.3)
     libnotify (0.8.2)
       ffi (>= 1.0.11)
     listen (2.6.2)
@@ -41,7 +42,7 @@ GEM
     rb-fsevent (0.9.4)
     rb-inotify (0.9.3)
       ffi (>= 0.5.0)
-    redcarpet (3.1.1)
+    redcarpet (1.17.2)
     ruby-sdl-ffi (0.4)
       nice-ffi (>= 0.2)
     ruby2ruby (2.0.7)
@@ -70,6 +71,7 @@ PLATFORMS
 DEPENDENCIES
   ffi (~> 1.1)
   ffi-opengl!
+  github-markup
   libnotify
   listen
   nokogiri
@@ -79,7 +81,7 @@ DEPENDENCIES
   rb-fchange
   rb-fsevent
   rb-inotify (~> 0.9)
-  redcarpet
+  redcarpet (~> 1.0)
   rubygame
   serialport (~> 1.1)
   wrong (~> 0.7.0)

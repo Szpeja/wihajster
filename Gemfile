@@ -5,7 +5,7 @@ def linux_gem(name, *v) gem name, *v, :require => RUBY_PLATFORM =~ /linux/i  ? n
 def win_gem(name, *v)   gem name, *v, :require => RUBY_PLATFORM =~ /mswin/i  ? name : false end
 
 # Utility gems - We want them available but not required unless we want to.
-def util_gem(name, opt={})      gem name, opt.merge(:require => false) end
+def util_gem(name, *args) args.last.is_a?(Hash) && args.last.merge!(:require => false);  gem(name, *args) end
 
 gem "ffi",        "~> 1.1"      # Foreign Function Interface
 gem "nokogiri"                  # XML Parsing.
@@ -18,8 +18,9 @@ util_gem "rubygame"             # For Joystick control
 util_gem "ffi-opengl", :path => "vendor/ffi-opengl"
 
 util_gem "rake"                 # Tasks
+util_gem "redcarpet", '~> 1.0'   # Markdown formatting for documentation
+util_gem "github-markup"
 util_gem "yard"                 # Documentation generator. 
-util_gem "redcarpet"            # Markdown formatting for documentation
 
 group :development do
   gem "pry"

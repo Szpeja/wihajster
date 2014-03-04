@@ -15,8 +15,12 @@ YARD::Rake::YardocTask.new do |t|
     '-opublic',
     '--title', "Wihajster Documentation",
     '--readme', 'Readme.md',
+    '--markup-provider', 'redcarpet',
     '--markup', 'markdown',
   ]
+
+  # -opublic --title "Wihajster Documentation" --readme 'Readme.md' --markup-provider 'redcarpet' --markup 'markdown'
+  #
 end
 
 namespace :gcode do
